@@ -1,0 +1,45 @@
+services:
+  mysql:
+    container_name: room-rental-mysql
+    ports:
+      - "3306:3306"
+
+  redis:
+    container_name: room-rental-redis
+    ports:
+      - "6379:6379"
+
+  rustfs:
+    container_name: room-rental-rustfs
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  redis-insight:
+    image: redis/redisinsight:3.8.0
+    container_name: room-rental-dev-redis-insight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis_insight_data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - room-rental-network
+
+  mailpit:
+    image: axllent/mailpit:v1.30.6
+    container_name: room-rental-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_SMTP_AUTH: ${MP_SMTP_AUTH}
+      MP_SMTP_AUTH_ALLOW_INSECURE: ${MP_SMTP_AUTH_ALLOW_INSECURE}
+    networks:
+      - room-rental-network
+
+volumes:
+  redis_insight_data:

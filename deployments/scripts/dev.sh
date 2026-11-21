@@ -6,13 +6,12 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 
 ENV_FILE="$PROJECT_DIR/env/.env.dev"
-COMPOSE_FILE="$PROJECT_DIR/docker-composes/compose.yml"
-DEV_COMPOSE_FILE="$PROJECT_DIR/docker-composes/compose.dev.yml"
+COMPOSE_FILE="$PROJECT_DIR/docker-composes/compose.dev.yml"
 
 ACTION="${1:-up}"
 PROFILE="${2:-}"
 
-for file in "$ENV_FILE" "$COMPOSE_FILE" "$DEV_COMPOSE_FILE"; do
+for file in "$ENV_FILE" "$COMPOSE_FILE"; do
   if [[ ! -f "$file" ]]; then
     echo "File not found: $file" >&2
     exit 1
@@ -23,7 +22,6 @@ compose() {
   local args=(
     --env-file "$ENV_FILE"
     -f "$COMPOSE_FILE"
-    -f "$DEV_COMPOSE_FILE"
   )
 
   if [[ -n "$PROFILE" ]]; then

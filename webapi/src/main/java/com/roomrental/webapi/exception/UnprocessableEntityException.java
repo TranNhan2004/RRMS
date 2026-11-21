@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class UnprocessableEntityException extends Exception {
+public class UnprocessableEntityException extends RuntimeException {
     private String message;
     private Map<String, Object> details;
     private Exception innerException;

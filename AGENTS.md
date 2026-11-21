@@ -47,6 +47,7 @@ src/main/java/com/roomrental/webapi
 - Models represent input/output data used by Services.
 - Mappers handle conversions between DTOs, Models, and Entities.
 - Use constructor-based dependency injection with `final` fields.
+- Use `var` for Java local variables when the type is clear from the initializer; otherwise, declare the type explicitly.
 - Keep implementations simple and avoid unnecessary abstraction.
 
 ## 1.3. API and Models
@@ -61,7 +62,7 @@ src/main/java/com/roomrental/webapi
 - Use static mapping methods in dedicated classes under `mapper/`.
 - Never return JPA Entities directly from Controllers.
 - Use Jakarta Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, etc.) for request validation.
-- Prefer Java `record` for immutable DTOs and Models when appropriate.
+- Use Java classes for DTOs and Models. Use records only for small objects declared directly inside a repository or service, with private, protected, or package-private accessibility.
 
 ## 1.4. Query and Command Services
 
@@ -94,8 +95,12 @@ src/main/java/com/roomrental/webapi
 
 ## 1.6. Database Scripts
 
+- Use `snake_case` for table, column, and constraint names in DDL and DML scripts, and enclose each name in backticks.
+- Format DDL for readability: put each column on its own indented line, align column names, data types, and nullability or constraints in columns using consistent spacing, and place `CREATE INDEX` and `ALTER TABLE` clauses on separate, clearly indented lines.
 - For new or modified columns, tables, indexes, or constraints, add a new SQL script under `ddl/vX.XX` using the latest version.
 - For predefined data insertion or updates, add a new SQL script under `dml/vX.XX` using the latest version.
+- Define primary keys inside `CREATE TABLE` statements. Define unique, foreign key, and check constraints in separate `ALTER TABLE` statements immediately below the corresponding `CREATE TABLE` statement so each part can be run independently.
+- Do not create a redundant index for a foreign key when MySQL will create a suitable index automatically.
 - Do not modify previously applied production scripts.
 - Do not rely on Hibernate `ddl-auto=update` in production.
 - Prefer `ddl-auto=validate` when database schemas are managed through SQL scripts.
@@ -128,10 +133,12 @@ src/main/java/com/roomrental/webapi
 
 - Always write Unit Tests for new or modified business logic.
 - Use JUnit 5, Mockito, and AssertJ.
+- Name Java test files and their test classes with the `Tests` suffix.
 - Follow the test naming convention: `FunctionName_Should{Outcome}_When{Condition}`.
-- Follow the Arrange–Act–Assert pattern.
+- Follow the Arrange–Act–Assert pattern in every Java unit test case, using the comments `// Arrange`, `// Act`, and `// Assert` to clearly mark each phase. Separate the phases with exactly one blank line.
 - Use `@ExtendWith(MockitoExtension.class)` for Service Unit Tests.
 - Use `@Mock` for dependencies and constructor injection or `@InjectMocks` for the tested Service.
+- Keep Java unit tests free of null-safety and unchecked type warnings. Prefer explicitly null-safe lambdas or assertions and typed `@Mock` fields for generic dependencies; when a warning cannot be avoided, document and narrowly scope any suppression.
 - Do not load Spring Application Context for ordinary Unit Tests.
 - Mock Repositories and external dependencies when testing Services.
 - Use Mockito `verify()`, `never()`, and `times()` to verify important interactions.
@@ -142,7 +149,7 @@ src/main/java/com/roomrental/webapi
 - Use `@DataJpaTest` for Repository integration tests.
 - Prefer Testcontainers with MySQL when testing database-specific behavior.
 - Verify transaction rollback and database constraints through integration tests.
-- Ensure all tests pass by running `mvn test`.
+- Ensure every Java change compiles successfully and all tests pass by running `mvn test`.
 - Never disable failing tests simply to pass the build.
 
 # 2. FRONTEND

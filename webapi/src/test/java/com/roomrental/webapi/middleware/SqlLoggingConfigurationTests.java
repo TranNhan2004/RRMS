@@ -21,7 +21,7 @@ class SqlLoggingConfigurationTests {
         ConfigDataEnvironmentPostProcessor.applyTo(environment);
 
         // Assert
-        assertThat(environment.getProperty("logging.level.org.hibernate.SQL")).isEqualTo("DEBUG");
+        assertThat(environment.getProperty("logging.level.org.hibernate.SQL")).isEqualTo("OFF");
         assertThat(environment.getProperty("logging.level.org.hibernate.orm.jdbc.bind")).isEqualTo("OFF");
         assertThat(environment.getProperty("spring.jpa.show-sql")).isEqualTo("false");
     }

@@ -1,4 +1,4 @@
-package com.roomrental.webapi.repository;
+package com.roomrental.webapi.abstraction.repository;
 
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

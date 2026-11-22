@@ -12,7 +12,7 @@ CREATE TABLE `audit_logs` (
     `old_values`            JSON            NULL,
     `new_values`            JSON            NULL,
     `actor_id`              VARCHAR(255)    NOT NULL,
-    `created_at`            DATETIME(6)     NOT NULL,
+    `created_at`            DATETIME(6)     NOT NULL
 );
 
 CREATE INDEX `idx_audit_logs_transaction_id` 

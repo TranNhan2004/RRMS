@@ -36,6 +36,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- OpenAPI and Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
         <!-- Hibernate + Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -99,6 +106,14 @@
             <artifactId>lombok</artifactId>
             <version>1.18.48</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- SQL Trace -->
+        <dependency>
+            <groupId>com.github.gavlyukovskiy</groupId>
+            <artifactId>p6spy-spring-boot-starter</artifactId>
+            <version>2.0.1</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Testing -->

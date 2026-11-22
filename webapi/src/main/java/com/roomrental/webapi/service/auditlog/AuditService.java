@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.roomrental.webapi.abstraction.repository.AuditLogRepository;
 import com.roomrental.webapi.entity.AuditLog;
-import com.roomrental.webapi.repository.AuditLogRepository;
 
 @Service
 public class AuditService {

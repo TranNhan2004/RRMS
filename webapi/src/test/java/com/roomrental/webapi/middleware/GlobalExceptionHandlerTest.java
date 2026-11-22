@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.roomrental.webapi.constant.error.CommonError;
 import com.roomrental.webapi.exception.ConflictException;
 import com.roomrental.webapi.exception.ForbiddenException;
 import com.roomrental.webapi.exception.NotFoundException;
@@ -72,7 +73,7 @@ class GlobalExceptionHandlerTest {
 
         // Assert
         assertThat(result.getResponse().getContentAsString())
-                .contains("Internal server error").doesNotContain("secret", "IllegalStateException");
+                .contains(CommonError.SOMETHING_WENT_WRONG).doesNotContain("secret", "IllegalStateException");
     }
 
     @Test

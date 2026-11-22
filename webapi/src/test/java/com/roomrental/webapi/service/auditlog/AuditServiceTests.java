@@ -11,9 +11,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.roomrental.webapi.abstraction.repository.AuditLogRepository;
 import com.roomrental.webapi.entity.AuditLog;
 import com.roomrental.webapi.enums.common.AuditAction;
-import com.roomrental.webapi.repository.AuditLogRepository;
 import com.roomrental.webapi.utils.UUIDUtils;
 
 class AuditServiceTests {

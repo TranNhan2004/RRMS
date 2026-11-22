@@ -59,6 +59,7 @@ src/main/java/com/roomrental/webapi
 - Controllers must convert DTOs to Models before calling Services.
 - Services must return Models rather than API DTOs.
 - Controllers must convert ResponseModels to Response DTOs.
+- Controllers must return `ResponseEntity<?>` with an explicit HTTP status, such as `ResponseEntity.ok(response)` for successful 200 responses, and document response status codes and body types using OpenAPI annotations.
 - Use static mapping methods in dedicated classes under `mapper/`.
 - Never return JPA Entities directly from Controllers.
 - Use Jakarta Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, etc.) for request validation.

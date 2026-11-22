@@ -70,6 +70,8 @@ public class AuditTransactionBuffer {
                 @Override
                 public void afterCompletion(int status) {
                     TransactionSynchronizationManager.unbindResourceIfPossible(resourceKey);
+                    // Only publish after the database commit has succeeded; rollbacks and unknown
+                    // outcomes are discarded.
                     if (status == STATUS_COMMITTED)
                         registered.records.forEach(queue::submit);
                 }

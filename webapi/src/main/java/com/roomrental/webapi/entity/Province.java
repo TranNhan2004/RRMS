@@ -1,5 +1,7 @@
 package com.roomrental.webapi.entity;
 
+import com.roomrental.webapi.annotation.Auditable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -12,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "provinces")
+@Auditable
 public class Province extends BaseEntity {
     @Column(name = "province_code", nullable = false, length = 10, unique = true)
     private String provinceCode;

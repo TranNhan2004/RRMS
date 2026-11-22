@@ -17,8 +17,13 @@ import com.roomrental.webapi.abstraction.repository.FilterQuery;
 import com.roomrental.webapi.dto.common.FilterCriterionRequest;
 import com.roomrental.webapi.dto.common.FilterRequest;
 import com.roomrental.webapi.dto.common.SortFieldRequest;
+import com.roomrental.webapi.dto.v1.address.GetFilteredProvincesRequest;
+import com.roomrental.webapi.dto.v1.address.GetFilteredWardsRequest;
 import com.roomrental.webapi.entity.Province;
 import com.roomrental.webapi.entity.Ward;
+import com.roomrental.webapi.mapper.AddressMapper;
+import com.roomrental.webapi.model.address.GetFilteredProvinceResponseItemModel;
+import com.roomrental.webapi.model.address.GetFilteredWardResponseItemModel;
 import com.roomrental.webapi.model.common.FilterFieldMap;
 import com.roomrental.webapi.model.common.FilterRequestModel;
 import com.roomrental.webapi.utils.FilterRequestParser;
@@ -174,6 +179,67 @@ public class FilterHandlerMySqlTests {
                         new WardRow("B" + suffix, selected.getName()));
                 assertThat(result.getTotalItems()).isEqualTo(2);
                 assertThat(result.getTotalPages()).isEqualTo(1);
+            } finally {
+                transaction.rollback();
+            }
+        }
+    }
+
+    @Test
+    void findFilteredWardsQuery_ShouldApplyProvinceAndSearchToItemsAndCount_WhenFiltering() {
+        // Arrange
+        try (Session session = factory.openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                var suffix = UUID.randomUUID().toString().substring(0, 8);
+                var selected = province("A" + suffix);
+                var other = province("B" + suffix);
+                session.persist(selected);
+                session.persist(other);
+                session.persist(ward("A" + suffix, selected));
+                session.persist(ward("B" + suffix, selected));
+                session.persist(ward("C" + suffix, other));
+                session.flush();
+                var dto = new GetFilteredWardsRequest();
+                dto.setProvinceId(selected.getId());
+                dto.setSearchGlobalText(suffix);
+                dto.setItemsPerPage(1);
+                var query = new WardRepositoryCustomImpl().findFilteredWardsQuery(selected.getId());
+
+                // Act
+                var result = new FilterHandler(session).applyFilter(AddressMapper.toModel(dto), query, GetFilteredWardResponseItemModel.class);
+
+                // Assert
+                assertThat(result.getItems()).hasSize(1).allSatisfy(item -> assertThat(item.getProvinceId()).isEqualTo(selected.getId()));
+                assertThat(result.getTotalItems()).isEqualTo(2);
+                assertThat(result.getTotalPages()).isEqualTo(2);
+                assertThat(result.isHasNextPage()).isTrue();
+            } finally {
+                transaction.rollback();
+            }
+        }
+    }
+
+    @Test
+    void findFilteredProvincesQuery_ShouldSearchNames_WhenFiltering() {
+        // Arrange
+        try (Session session = factory.openSession()) {
+            var transaction = session.beginTransaction();
+            try {
+                var suffix = UUID.randomUUID().toString().substring(0, 8);
+                session.persist(province("A" + suffix));
+                session.persist(province("B" + suffix));
+                session.flush();
+                var dto = new GetFilteredProvincesRequest();
+                dto.setSearchGlobalText("Province A" + suffix);
+                var query = new ProvinceRepositoryCustomImpl().findFilteredProvincesQuery();
+
+                // Act
+                var result = new FilterHandler(session).applyFilter(AddressMapper.toModel(dto), query, GetFilteredProvinceResponseItemModel.class);
+
+                // Assert
+                assertThat(result.getTotalItems()).isEqualTo(1);
+                assertThat(result.getItems()).singleElement().satisfies(item -> assertThat(item.getName()).isEqualTo("Province A" + suffix));
             } finally {
                 transaction.rollback();
             }

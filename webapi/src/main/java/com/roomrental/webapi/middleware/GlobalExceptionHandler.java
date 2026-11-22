@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.roomrental.webapi.constant.error.CommonError;
 import com.roomrental.webapi.dto.common.ErrorReponse;
 import com.roomrental.webapi.exception.ConflictException;
 import com.roomrental.webapi.exception.ForbiddenException;
@@ -61,8 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
 
         HttpStatus knownStatus = HttpStatus.resolve(status.value());
-        String message = status.is5xxServerError() ? "Internal server error"
-                : knownStatus != null ? knownStatus.getReasonPhrase() : "Request failed";
+        String message = status.is5xxServerError() ? CommonError.SOMETHING_WENT_WRONG
+                : knownStatus != null ? knownStatus.getReasonPhrase() : CommonError.SOMETHING_WENT_WRONG;
         return new ResponseEntity<>(error(message, null), headers, status);
     }
 
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             throw exception;
         }
         LOGGER.error("Unhandled exception of type {}", exception.getClass().getName());
-        return response(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
+        return response(HttpStatus.INTERNAL_SERVER_ERROR, CommonError.SOMETHING_WENT_WRONG, null);
     }
 
     private static ResponseEntity<ErrorReponse> response(

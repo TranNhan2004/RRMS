@@ -1,0 +1,1 @@
+a known vulnerability in the transitive MySqlConnector 2.4.0 dependency

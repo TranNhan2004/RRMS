@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="RRMS.Api/RRMS.Api.csproj" />
+  <Project Path="RRMS.Application/RRMS.Application.csproj" />
+  <Project Path="RRMS.Domain/RRMS.Domain.csproj" />
+  <Project Path="RRMS.Infrastructure/RRMS.Infrastructure.csproj" />
+  <Project Path="RRMS.Api.Tests/RRMS.Api.Tests.csproj" />
+  <Project Path="RRMS.Application.Tests/RRMS.Application.Tests.csproj" />
+  <Project Path="RRMS.Domain.Tests/RRMS.Domain.Tests.csproj" />
+  <Project Path="RRMS.Infrastructure.Tests/RRMS.Infrastructure.Tests.csproj" />
+</Solution>

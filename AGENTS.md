@@ -1,157 +1,62 @@
 # 1. BACKEND
 
-## 1.1. Technology Stack
+## 1.1. Structure
 
-- Language: Java 21+
-- Framework: Spring Boot
-- ORM: Spring Data JPA + Hibernate
-- Database: MySQL
-- Cache: Spring Data Redis
-- Object Storage: AWS SDK v2 (S3-compatible, RustFS)
-- Security: Spring Security + JWT + Google OAuth2/OIDC
-- Testing: JUnit 5 + Mockito + AssertJ
+- Use Clean Architecture for C# code, following the existing `webapi2` projects: API, Application, Domain, and Infrastructure.
+- Use a flexible module architecture for Go code.
+- Keep implementations simple and avoid unnecessary abstractions.
 
-## 1.2. Structure
+## 1.2. API and Models
 
-Follow a traditional **Layered Architecture (Package by Layer)**.
+- Create Request and Response DTOs for each API, using the `Request` and `Response` suffixes.
+- Create corresponding application models for each feature, using the `RequestModel` and `ResponseModel` suffixes.
+- Place DTOs in the API layer and models in the Application layer. Controllers convert request DTOs to models before calling services and convert response models to DTOs before returning them.
+- Define static mapping methods on DTOs: `ToModel` for requests and `FromModel` for responses.
+- Do not return persistence entities directly from controllers.
+- Follow the existing controller style: explicitly declare response status codes and body types, and use request mapping, service invocation, and response mapping as separate steps.
+- Validate requests and return consistent API error responses with appropriate status codes.
 
-```text
-src/main/java/com/roomrental/webapi
-├── config/
-├── controller/
-├── service/
-│   ├── UserQueryService.java
-│   ├── UserCommandService.java
-│   ├── RoomQueryService.java
-│   └── RoomCommandService.java
-├── repository/
-├── entity/
-├── dto/
-│   ├── common/
-│   └── v1/
-├── model/
-│   ├── common/
-│   └── user/
-├── mapper/
-├── exception/
-└── WebApiApplication.java
-```
+## 1.3. Services and Persistence
 
-- Organize packages by technical responsibility, not by domain or feature.
-- Do not introduce Clean Architecture, Hexagonal Architecture, or domain-specific architectural layers.
-- Controllers handle HTTP requests, validation, and response mapping.
-- Services contain business logic, application workflows, and transaction boundaries.
-- Repositories handle database access.
-- Entities represent JPA persistence models.
-- DTOs represent API contracts.
-- Models represent input/output data used by Services.
-- Mappers handle conversions between DTOs, Models, and Entities.
-- Use constructor-based dependency injection with `final` fields.
-- Use `var` for Java local variables when the type is clear from the initializer; otherwise, declare the type explicitly.
-- Keep implementations simple and avoid unnecessary abstraction.
+- Put read-only operations (SELECT) in `<X>QueryService` and write operations (INSERT, UPDATE, DELETE) in `<X>CommandService`.
+- Use `Find` as the prefix for repository read methods and `Get` for service and controller read methods.
+- Create dedicated repository methods for complex queries involving joins. Fetch only the data needed and avoid unnecessary database round trips and N+1 queries.
+- Use parameterized database queries.
+- For C#, use `IUnitOfWork` to commit database changes in command services.
+- For C#, reuse the existing generic filtering, pagination, and sorting utilities when a feature needs them.
+- For C#, use LINQ query syntax for joins; do not use method syntax for joins.
+- For C#, use conventional constructors and constructor-based dependency injection. Do not use primary constructors.
+- Keep database transactions short and use concurrency controls when needed.
 
-## 1.3. API and Models
+## 1.4. Database Scripts
 
-- Always create Request/Response DTOs for each API with the suffixes `Request` and `Response`.
-- Always create corresponding service-level models with the suffixes `RequestModel` and `ResponseModel`.
-- Place API DTOs in `dto` and `dto`.
-- Place Service Models in `model` and `model`.
-- Controllers must convert DTOs to Models before calling Services.
-- Services must return Models rather than API DTOs.
-- Controllers must convert ResponseModels to Response DTOs.
-- Controllers must return `ResponseEntity<?>` with an explicit HTTP status, such as `ResponseEntity.ok(response)` for successful 200 responses, and document response status codes and body types using OpenAPI annotations.
-- Use static mapping methods in dedicated classes under `mapper/`.
-- Never return JPA Entities directly from Controllers.
-- Use Jakarta Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, etc.) for request validation.
-- Use Java classes for DTOs and Models. Use records only for small objects declared directly inside a repository or service, with private, protected, or package-private accessibility.
-
-## 1.4. Query and Command Services
-
-- Put all read-only operations (SELECT) in `<X>QueryService`.
-- Put all write operations (INSERT, UPDATE, DELETE) in `<X>CommandService`.
-- Do not execute database modifications inside Query Services.
-- Use `@Transactional(readOnly = true)` for Query Service operations requiring a transactional persistence context.
-- Use `@Transactional` for Command Service operations that modify database records.
-- Let Spring manage transaction commit and rollback automatically.
-- Do not introduce a custom `IUnitOfWork` abstraction.
-- Keep transaction boundaries at the Service level.
-- Avoid long-running operations and external API calls inside database transactions.
-- Use optimistic or pessimistic locking when concurrent modifications must be controlled.
-
-## 1.5. Repository and Database Access
-
-- Use Spring Data JPA (`JpaRepository`) for standard database operations.
-- Use the `find` prefix for Repository query methods.
-- Use the `get` prefix for read operations in Services and Controllers.
-- Create dedicated Repository methods for complex queries involving multiple tables.
-- Avoid unnecessary database round trips by fetching related data efficiently.
-- Prevent N+1 queries using DTO projections, JPQL JOIN FETCH, or EntityGraph where appropriate.
-- Prefer JPQL or derived queries for simple queries.
-- Use native SQL when necessary for database-specific operations or performance.
-- Fetch only the fields required by the feature when practical.
-- Use Spring Data `Pageable` and `Sort` for pagination and sorting.
-- Reuse existing common filtering and pagination utilities.
-- Always parameterize SQL and JPQL queries.
-- Consider indexes and execution plans when optimizing complex queries.
-
-## 1.6. Database Scripts
-
+- Use MySQL `TIMESTAMP` for timestamp columns in DDL scripts.
 - Use `snake_case` for table, column, and constraint names in DDL and DML scripts, and enclose each name in backticks.
-- Format DDL for readability: put each column on its own indented line, align column names, data types, and nullability or constraints in columns using consistent spacing, and place `CREATE INDEX` and `ALTER TABLE` clauses on separate, clearly indented lines.
-- For new or modified columns, tables, indexes, or constraints, add a new SQL script under `ddl/vX.XX` using the latest version.
-- For predefined data insertion or updates, add a new SQL script under `dml/vX.XX` using the latest version.
-- Define primary keys inside `CREATE TABLE` statements. Define unique, foreign key, and check constraints in separate `ALTER TABLE` statements immediately below the corresponding `CREATE TABLE` statement so each part can be run independently.
-- Do not create a redundant index for a foreign key when MySQL will create a suitable index automatically.
-- Do not modify previously applied production scripts.
-- Do not rely on Hibernate `ddl-auto=update` in production.
-- Prefer `ddl-auto=validate` when database schemas are managed through SQL scripts.
-- Ensure schema changes are backward-compatible when required.
+- Format DDL for readability: put each column on its own indented line, align names, types, and constraints, and place `CREATE INDEX` and `ALTER TABLE` clauses on separate lines.
+- Add a new SQL script under the latest `DDL/vX.XX` directory for new or modified tables, columns, indexes, or constraints. Add predefined data changes under the latest `DML/vX.XX` directory.
+- Define primary keys inside `CREATE TABLE`. Define unique, foreign key, and check constraints in separate `ALTER TABLE` statements immediately below the corresponding `CREATE TABLE`.
+- Do not add a redundant index for a foreign key when MySQL creates a suitable index automatically.
+- Do not modify previously applied production scripts. Keep schema changes backward-compatible when required.
 
-## 1.7. Authentication and Security
+## 1.5. Security, Errors, and Logging
 
-- Use Spring Security for authentication and authorization.
-- Use JWT Bearer tokens for protected APIs.
-- Use Spring Security OAuth2 Client for Google login.
-- Map Google identities to internal users after successful authentication.
-- Use the Google `sub` claim as the stable external identity identifier.
-- Use application-managed JWTs for internal API authentication.
-- Never hardcode secrets, passwords, tokens, or object storage credentials.
-- Store sensitive configuration in environment variables or secure configuration providers.
-- Validate both authentication and authorization before allowing protected operations.
+- Validate authentication and authorization for protected operations. Use JWT Bearer tokens for protected APIs.
+- Use the Google `sub` claim as the stable identifier when mapping Google identities to internal users.
+- Never hardcode secrets, passwords, tokens, or object storage credentials; use environment variables or secure configuration providers.
+- Handle exceptions centrally, define meaningful business exceptions, and never expose stack traces or sensitive internal details to clients.
+- Use parameterized logging and include correlation IDs when available. Never log passwords, tokens, or secrets.
 
-## 1.8. Exception Handling and Logging
+## 1.6. Tests
 
-- Use `@RestControllerAdvice` for centralized exception handling.
-- Return consistent API error responses with appropriate HTTP status codes.
-- Define meaningful custom exceptions for business errors.
-- Never expose stack traces or sensitive internal information to clients.
-- Use SLF4J for application logging.
-- Prefer parameterized logging.
-- Include correlation IDs in logs when available.
-- Never log passwords, access tokens, refresh tokens, or secrets.
+- Always write unit tests for new or modified behavior. For C#, use xUnit and AwesomeAssertions, and name tests `FunctionName_Should{Outcome}_When{Condition}`.
+- Test success, failure, and important edge cases; mock repositories and external dependencies in service unit tests.
+- Run `dotnet test` for C# changes and ensure all tests pass. Never disable failing tests merely to pass the build.
+- Use integration tests for database-specific behavior, constraints, and transaction rollback when appropriate.
 
-## 1.9. Unit Tests and Integration Tests
+## 1.7. Go Formatting
 
-- Always write Unit Tests for new or modified business logic.
-- Use JUnit 5, Mockito, and AssertJ.
-- Name Java test files and their test classes with the `Tests` suffix.
-- Follow the test naming convention: `FunctionName_Should{Outcome}_When{Condition}`.
-- Follow the Arrange–Act–Assert pattern in every Java unit test case, using the comments `// Arrange`, `// Act`, and `// Assert` to clearly mark each phase. Separate the phases with exactly one blank line.
-- Use `@ExtendWith(MockitoExtension.class)` for Service Unit Tests.
-- Use `@Mock` for dependencies and constructor injection or `@InjectMocks` for the tested Service.
-- Keep Java unit tests free of null-safety and unchecked type warnings. Prefer explicitly null-safe lambdas or assertions and typed `@Mock` fields for generic dependencies; when a warning cannot be avoided, document and narrowly scope any suppression.
-- Do not load Spring Application Context for ordinary Unit Tests.
-- Mock Repositories and external dependencies when testing Services.
-- Use Mockito `verify()`, `never()`, and `times()` to verify important interactions.
-- Use AssertJ `assertThat()` and `assertThatThrownBy()` for assertions.
-- Test success cases, failures, exceptions, and important edge cases.
-- Use `@ParameterizedTest` for related test scenarios.
-- Use `@WebMvcTest` and MockMvc for Controller tests.
-- Use `@DataJpaTest` for Repository integration tests.
-- Prefer Testcontainers with MySQL when testing database-specific behavior.
-- Verify transaction rollback and database constraints through integration tests.
-- Ensure every Java change compiles successfully and all tests pass by running `mvn test`.
-- Never disable failing tests simply to pass the build.
+- Format non-empty struct and map initializations over multiple lines, with each field or entry on its own line and a trailing comma.
+- Format slice and array initializations over multiple lines; short slices and arrays of simple values, such as integers or short strings, may be inline.
 
 # 2. FRONTEND
 

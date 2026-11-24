@@ -1,2 +1,0 @@
-com.roomrental.webapi.abstraction.repository.ProvinceRepositoryCustom=com.roomrental.webapi.repository.ProvinceRepositoryCustomImpl
-com.roomrental.webapi.abstraction.repository.WardRepositoryCustom=com.roomrental.webapi.repository.WardRepositoryCustomImpl

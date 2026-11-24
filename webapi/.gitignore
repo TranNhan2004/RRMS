@@ -1,38 +1,36 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+.idea/
+*.sln.iml
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+Logs/
+logs/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
 .vscode/
 
-application-local.properties
-application-dev.properties
-application-test.properties
-application-prod.properties
+# .NET build artifacts
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Handle malformed Windows-style directory names on Linux
+bin\*/
+obj\*/
+**/bin\*/
+**/obj\*/
+
+.vs/
+*.user
+*.suo
+
+TestResults/
+coverage/
+
+appsettings.Development.json
+appsettings.Dev.json
+appsettings.Test.json
+appsettings.Staging.json
+appsettings.Production.json
+
+.env
+.env.*
+!.env.example

@@ -13,13 +13,15 @@ public class PaginationRequest
         init
         {
             if (value < 1)
+            {
                 throw new UnprocessableEntityException(
-                    "Current page must be a positive integer.",
-                    new Dictionary<string, object?>
-                    {
-                        ["field"] = "currentPage"
-                    }
-                );
+                                "Current page must be a positive integer.",
+                                new Dictionary<string, object?>
+                                {
+                                    ["field"] = "currentPage"
+                                }
+                            );
+            }
 
             currentPage = value;
         }
@@ -31,13 +33,15 @@ public class PaginationRequest
         init
         {
             if (value < 1)
+            {
                 throw new UnprocessableEntityException(
-                    "Items per page must be a positive integer.",
-                    new Dictionary<string, object?>
-                    {
-                        ["field"] = "itemsPerPage"
-                    }
-                );
+                                "Items per page must be a positive integer.",
+                                new Dictionary<string, object?>
+                                {
+                                    ["field"] = "itemsPerPage"
+                                }
+                            );
+            }
 
             itemsPerPage = value;
         }

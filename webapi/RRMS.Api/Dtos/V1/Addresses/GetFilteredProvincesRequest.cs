@@ -11,9 +11,13 @@ public class GetFilteredProvincesRequest : FilterRequest<GetFilteredProvinceResp
 
     public static GetFilteredProvincesRequestModel ToModel(GetFilteredProvincesRequest request) => new()
     {
-        CurrentPage = request.CurrentPage, ItemsPerPage = request.ItemsPerPage,
-        SearchGlobalText = request.SearchGlobalText, FilterGroup = request.BuildFilterGroup(),
-        FilterCriteria = request.BuildFilterCriteria(), SortFields = request.BuildSortFields(), TimeZoneId = request.ParseTimeZone()
+        CurrentPage = request.CurrentPage,
+        ItemsPerPage = request.ItemsPerPage,
+        SearchGlobalText = request.SearchGlobalText,
+        FilterGroup = request.BuildFilterGroup(),
+        FilterCriteria = request.BuildFilterCriteria(),
+        SortFields = request.BuildSortFields(),
+        TimeZoneId = request.ParseTimeZone()
 
     };
 }

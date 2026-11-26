@@ -2,13 +2,12 @@ using System.Text.Json;
 using StackExchange.Redis;
 using RRMS.Application.Interfaces.Services.Cache;
 using RRMS.Domain.Constants.CacheKeys;
+using RRMS.Domain.Utils;
 
 namespace RRMS.Infrastructure.Services.Cache;
 
 public class RedisService : ICacheService
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
-
     private readonly IDatabase _database;
 
     public RedisService(IConnectionMultiplexer connectionMultiplexer)
@@ -34,7 +33,7 @@ public class RedisService : ICacheService
 
         return JsonSerializer.Deserialize<T>(
             cachedValue.ToString(),
-            JsonOptions);
+            JsonUtils.WebSerializerOptions);
     }
 
     public async Task SetAsync<T>(
@@ -45,7 +44,7 @@ public class RedisService : ICacheService
         ValidateKey(keyObj.Key);
         ArgumentNullException.ThrowIfNull(value);
 
-        var serializedValue = JsonSerializer.Serialize(value, JsonOptions);
+        var serializedValue = JsonSerializer.Serialize(value, JsonUtils.WebSerializerOptions);
 
         var redisExpiration = keyObj.Expiration.HasValue
             ? new Expiration(keyObj.Expiration.Value)

@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using RRMS.Application.Interfaces.Services.Authentication;
-using RRMS.Infrastructure.Options;
+using Microsoft.AspNetCore.Antiforgery;
+using RRMS.Api.Attributes;
+using RRMS.Api.Dtos.Common;
+using RRMS.Domain.Utils;
+using RRMS.Infrastructure.Services.Csrf;
 
 namespace RRMS.Api.Middlewares;
 
@@ -14,59 +15,33 @@ public class CsrfMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, ITokenService tokenService, IOptions<CsrfOptions> options)
+    public async Task InvokeAsync(HttpContext context, CsrfService csrfService)
     {
-        if (IsSafeMethod(context.Request.Method) || IsAnonymousAuthentication(context.Request.Path))
+        var endpoint = context.GetEndpoint();
+        var shouldSkip = endpoint == null || HttpMethods.IsGet(context.Request.Method) ||
+            HttpMethods.IsHead(context.Request.Method) || HttpMethods.IsOptions(context.Request.Method) ||
+            HttpMethods.IsTrace(context.Request.Method) || endpoint.Metadata.GetMetadata<SkipCsrfAttribute>() != null;
+        if (!shouldSkip)
         {
-            await _next(context);
-            return;
-        }
-
-        string? sessionId = null;
-        try
-        {
-            var refreshToken = context.Request.Cookies["RRMS_REFRESH"];
-            if (!string.IsNullOrWhiteSpace(refreshToken))
+            try
             {
-                sessionId = tokenService.ValidateRefreshToken(refreshToken).FindFirst("jti")?.Value;
+                await csrfService.ValidateAsync(context);
             }
-            else
+            catch (AntiforgeryValidationException)
             {
-                var authorization = context.Request.Headers.Authorization.ToString();
-                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(new ErrorResponse
                 {
-                    sessionId = tokenService.ValidateAccessToken(authorization[7..].Trim()).FindFirst("sessionId")?.Value;
-                }
+                    Message = "Invalid or missing antiforgery token.",
+                    Details = new Dictionary<string, object?>
+                    {
+                        ["code"] = "CSRF_VALIDATION_FAILED"
+                    }
+                }, JsonUtils.WebSerializerOptions);
+                return;
             }
-        }
-        catch (Exception exception) when (exception is SecurityTokenException or ArgumentException)
-        {
-            sessionId = null;
-        }
-
-        var csrf = options.Value;
-        var cookie = context.Request.Cookies[csrf.CookieName];
-        var header = context.Request.Headers[csrf.HeaderName].ToString();
-        if (!tokenService.ValidateCsrfToken(sessionId, cookie, header))
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return;
         }
 
         await _next(context);
-    }
-
-    private static bool IsSafeMethod(string method) =>
-        HttpMethods.IsGet(method) || HttpMethods.IsHead(method) || HttpMethods.IsOptions(method) || HttpMethods.IsTrace(method);
-
-    private static bool IsAnonymousAuthentication(PathString path)
-    {
-        var segments = (path.Value ?? string.Empty).Split('/', StringSplitOptions.RemoveEmptyEntries);
-        return segments.Length == 4 && segments[0].Equals("api", StringComparison.OrdinalIgnoreCase) &&
-            segments[1].StartsWith("v", StringComparison.OrdinalIgnoreCase) &&
-            segments[2].Equals("auth", StringComparison.OrdinalIgnoreCase) &&
-            (segments[3].Equals("register", StringComparison.OrdinalIgnoreCase) ||
-             segments[3].Equals("verify-email", StringComparison.OrdinalIgnoreCase) ||
-             segments[3].Equals("login", StringComparison.OrdinalIgnoreCase));
     }
 }

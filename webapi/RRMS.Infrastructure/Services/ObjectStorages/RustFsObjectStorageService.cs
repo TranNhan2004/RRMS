@@ -80,7 +80,9 @@ public class RustFsObjectStorageService : IObjectStorageService
             Protocol = _presignedUrlProtocol
         };
         if (contentDisposition is not null)
+        {
             request.ResponseHeaderOverrides.ContentDisposition = contentDisposition;
+        }
 
         return _client.GetPreSignedURLAsync(request);
     }

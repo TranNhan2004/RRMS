@@ -14,6 +14,7 @@ public class UserControllerTests
     [Fact]
     public async Task GetCurrentUserAsync_ShouldReturnUserAndProfile_WhenUserExists()
     {
+        // Arrange
         var id = Guid.NewGuid();
         var service = new Mock<IUserQueryService>();
         service.Setup(x => x.GetCurrentUserAsync(CancellationToken.None)).ReturnsAsync(new GetCurrentUserResponseModel
@@ -21,12 +22,17 @@ public class UserControllerTests
             Id = id,
             UserName = "alice",
             Email = "alice@example.com",
-            Profile = new GetCurrentUserProfileResponseModel { FirstName = "Alice" }
+            Profile = new GetCurrentUserProfileResponseModel
+            {
+                FirstName = "Alice"
+            }
         });
         var controller = new UserController(service.Object);
 
+        // Act
         var result = await controller.GetCurrentUserAsync();
 
+        // Assert
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         var response = ok.Value.Should().BeOfType<GetCurrentUserResponse>().Subject;
         response.Id.Should().Be(id);

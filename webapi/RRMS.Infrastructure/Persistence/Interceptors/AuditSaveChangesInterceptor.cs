@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
+using RRMS.Application.Interfaces.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -16,15 +16,15 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     internal const string AuditIgnoreAnnotation = "RRMS:AuditIgnore";
 
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentRequestContext _currentRequestContext;
     private readonly IAuditLogBackgroundQueue _auditLogBackgroundQueue;
     private readonly ConcurrentDictionary<Guid, IReadOnlyCollection<AuditLog>> _pendingAuditLogs = new();
 
     public AuditSaveChangesInterceptor(
-        IHttpContextAccessor httpContextAccessor,
+        ICurrentRequestContext currentRequestContext,
         IAuditLogBackgroundQueue auditLogBackgroundQueue)
     {
-        _httpContextAccessor = httpContextAccessor;
+        _currentRequestContext = currentRequestContext;
         _auditLogBackgroundQueue = auditLogBackgroundQueue;
     }
 
@@ -34,10 +34,12 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         CancellationToken cancellationToken = default)
     {
         if (eventData.Context is not AppDbContext context)
+        {
             return base.SavingChangesAsync(
-                eventData,
-                result,
-                cancellationToken);
+                        eventData,
+                        result,
+                        cancellationToken);
+        }
 
         var auditLogs = ApplyAudit(context);
         if (auditLogs.Count > 0)
@@ -101,7 +103,6 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         var parsedActorId = Guid.TryParse(actorId, out var guid) ? guid : Guid.Empty;
         var now = DateTimeOffset.UtcNow;
         var auditEntries = new List<AuditLog>();
-        var httpContext = _httpContextAccessor.HttpContext;
 
         foreach (var entry in context.ChangeTracker.Entries<BaseEntity>())
         {
@@ -132,7 +133,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             if (!string.IsNullOrWhiteSpace(actorId)
                 && state is EntityState.Added or EntityState.Modified or EntityState.Deleted)
             {
-                auditEntries.Add(CreateAuditLog(entry, actorId, now, httpContext));
+                auditEntries.Add(CreateAuditLog(entry, actorId, now, _currentRequestContext));
             }
         }
 
@@ -143,7 +144,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         EntityEntry<BaseEntity> entry,
         string actorId,
         DateTimeOffset now,
-        HttpContext? httpContext)
+        ICurrentRequestContext requestContext)
     {
         var action = entry.State switch
         {
@@ -158,10 +159,10 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             Id = Guid.CreateVersion7(),
             Action = action,
             TraceId = Activity.Current?.TraceId.ToString(),
-            RequestId = httpContext?.TraceIdentifier,
-            IpAddress = httpContext?.Connection.RemoteIpAddress?.ToString(),
-            ClientActionId = GetHeader(httpContext, "X-Client-Action-Id"),
-            ClientRequestId = GetHeader(httpContext, "X-Client-Request-Id"),
+            RequestId = requestContext.TraceId,
+            IpAddress = requestContext.RemoteIpAddress,
+            ClientActionId = requestContext.ClientActionId,
+            ClientRequestId = requestContext.ClientRequestId,
             EntityName = entry.Metadata.ClrType.Name,
             EntityId = entry.Property(nameof(BaseEntity.Id)).CurrentValue?.ToString() ?? string.Empty,
             OldValues = action is AuditAction.Update or AuditAction.Delete
@@ -203,7 +204,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             }
         }
 
-        return values.Count == 0 ? null : JsonSerializer.Serialize(values);
+        return values.Count == 0 ? null : JsonSerializer.Serialize(values, JsonUtils.WebSerializerOptions);
     }
 
     private static string SerializeComplexProperty(
@@ -222,7 +223,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
                 SerializeComplexProperty(nestedComplexProperty, useOriginalValues));
         }
 
-        return JsonSerializer.Serialize(values);
+        return JsonSerializer.Serialize(values, JsonUtils.WebSerializerOptions);
     }
 
     private static object? FormatAuditValue(object? value)
@@ -236,8 +237,5 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         return document.RootElement.Clone();
     }
 
-    private static string? GetHeader(HttpContext? httpContext, string name)
-    {
-        return httpContext?.Request.Headers[name].FirstOrDefault();
-    }
+
 }

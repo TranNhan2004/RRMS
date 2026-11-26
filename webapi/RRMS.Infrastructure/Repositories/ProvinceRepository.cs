@@ -13,7 +13,16 @@ public class ProvinceRepository : GenericRepository<Province>, IProvinceReposito
 
     public Task<FilterResult<GetFilteredProvinceResponseItemModel>> FindFilteredProvincesAsync(GetFilteredProvincesRequestModel request, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Set<Province>().Select(x => new GetFilteredProvinceResponseItemModel { Id = x.Id, ProvinceCode = x.ProvinceCode, Name = x.Name, ShortName = x.ShortName, Code = x.Code, PlaceType = x.PlaceType, Country = x.Country });
+        var query = _dbContext.Set<Province>().Select(x => new GetFilteredProvinceResponseItemModel
+        {
+            Id = x.Id,
+            ProvinceCode = x.ProvinceCode,
+            Name = x.Name,
+            ShortName = x.ShortName,
+            Code = x.Code,
+            PlaceType = x.PlaceType,
+            Country = x.Country
+        });
         return query.ToFilterResultAsync(request, cancellationToken);
     }
 }

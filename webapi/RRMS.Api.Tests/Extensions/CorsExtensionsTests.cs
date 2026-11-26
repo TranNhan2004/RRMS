@@ -13,9 +13,14 @@ public class CorsExtensionsTests
     [Fact]
     public async Task AddApplicationCors_ShouldAllowConfiguredOrigin_WhenPreflightIsAllowed()
     {
+        // Arrange
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
-            ["Cors:AllowedOrigins:0"] = "https://example.org"
+            ["Cors:AllowedOrigins:0"] = "https://example.org",
+            ["Cors:AllowedMethods:0"] = "POST",
+            ["Cors:AllowedHeaders:0"] = "Content-Type",
+            ["Cors:AllowedHeaders:1"] = "X-XSRF-TOKEN",
+            ["Cors:AllowCredentials"] = "true"
         }).Build();
         var services = new ServiceCollection();
         services.AddLogging();
@@ -29,8 +34,11 @@ public class CorsExtensionsTests
         context.Request.Headers.AccessControlRequestHeaders = "content-type,x-xsrf-token";
 
         var policy = await policies.GetPolicyAsync(context, CorsExtensions.PolicyName);
+
+        // Act
         var result = provider.GetRequiredService<ICorsService>().EvaluatePolicy(context, policy!);
 
+        // Assert
         result.IsOriginAllowed.Should().BeTrue();
         result.SupportsCredentials.Should().BeTrue();
         result.AllowedHeaders.Should().Contain(header => string.Equals(header, "x-xsrf-token", StringComparison.OrdinalIgnoreCase));
@@ -39,14 +47,17 @@ public class CorsExtensionsTests
     [Fact]
     public void AddApplicationCors_ShouldRejectWildcard_WhenCredentialsAreAllowed()
     {
+        // Arrange
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["Cors:AllowedOrigins:0"] = "*"
         }).Build();
         var services = new ServiceCollection();
 
+        // Act
         var action = () => services.AddApplicationCors(configuration);
 
+        // Assert
         action.Should().Throw<InvalidOperationException>();
     }
 }

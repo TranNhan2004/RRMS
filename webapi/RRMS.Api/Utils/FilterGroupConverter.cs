@@ -348,7 +348,10 @@ public static class FilterGroupConverter
             Logic = FilterGroupLogic.And,
             Children =
             [
-                new FilterGroupNode { Group = filterGroup },
+                new FilterGroupNode
+                {
+                    Group = filterGroup
+                },
                 .. missingCriterionIndexes.Select(index => new FilterGroupNode
                 {
                     CriterionIndex = index

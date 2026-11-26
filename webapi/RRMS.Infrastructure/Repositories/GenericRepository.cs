@@ -35,7 +35,9 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : cla
         IQueryable<T> query = _dbContext.Set<T>();
 
         if (!trackChanges)
+        {
             query = query.AsNoTracking();
+        }
 
         query = condition(query);
         return await query.FirstOrDefaultAsync(cancellationToken);
@@ -48,7 +50,9 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : cla
         IQueryable<T> query = _dbContext.Set<T>();
 
         if (!trackChanges)
+        {
             query = query.AsNoTracking();
+        }
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -61,7 +65,9 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : cla
         IQueryable<T> query = _dbContext.Set<T>();
 
         if (!trackChanges)
+        {
             query = query.AsNoTracking();
+        }
 
         query = condition(query);
         return await query.ToListAsync(cancellationToken);
@@ -74,7 +80,9 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : cla
         IQueryable<T> query = _dbContext.Set<T>();
 
         if (!trackChanges)
+        {
             query = query.AsNoTracking();
+        }
 
         query = condition(query);
         return query;

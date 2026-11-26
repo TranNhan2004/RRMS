@@ -8,9 +8,17 @@ public class GetFilteredWardsResponse : FilterResponse<GetFilteredWardResponseIt
 {
     public static GetFilteredWardsResponse FromModel(FilterResult<GetFilteredWardResponseItemModel> result) => new()
     {
-        Items = [.. result.Items.Select(item => new GetFilteredWardResponseItem { Id = item.Id, WardCode = item.WardCode, Name = item.Name, ProvinceId = item.ProvinceId })],
-        CurrentPage = result.CurrentPage, ItemsPerPage = result.ItemsPerPage,
-        TotalItems = result.TotalItems, TotalPages = result.TotalPages
+        Items = [.. result.Items.Select(item => new GetFilteredWardResponseItem
+        {
+            Id = item.Id,
+            WardCode = item.WardCode,
+            Name = item.Name,
+            ProvinceId = item.ProvinceId
+        })],
+        CurrentPage = result.CurrentPage,
+        ItemsPerPage = result.ItemsPerPage,
+        TotalItems = result.TotalItems,
+        TotalPages = result.TotalPages
     };
 }
 

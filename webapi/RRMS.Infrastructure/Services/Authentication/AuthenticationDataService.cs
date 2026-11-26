@@ -1,81 +1,144 @@
-using Microsoft.EntityFrameworkCore;
 using RRMS.Application.Interfaces.Repositories;
 using RRMS.Application.Interfaces.Services.Authentication;
 using RRMS.Domain.Entities;
+using RRMS.Domain.Constants.Uam;
 using RRMS.Domain.Enums.Uam;
 using RRMS.Domain.Enums.Users;
-using RRMS.Infrastructure.Persistence;
+using RRMS.Domain.Exceptions;
 
 namespace RRMS.Infrastructure.Services.Authentication;
 
+/// <summary>
+/// Coordinates authentication-related account lookups and account creation through repositories.
+/// It commits new verified users and Google identities through the unit of work.
+/// </summary>
 public class AuthenticationDataService : IAuthenticationDataService
 {
-    private readonly AppDbContext _context;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserCredentialRepository _userCredentialRepository;
+    private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserIdentityRepository _userIdentityRepository;
+    private readonly IUserRoleRepository _userRoleRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AuthenticationDataService(AppDbContext context, IUnitOfWork unitOfWork)
+    public AuthenticationDataService(
+        IUserRepository userRepository,
+        IUserCredentialRepository userCredentialRepository,
+        IUserProfileRepository userProfileRepository,
+        IUserIdentityRepository userIdentityRepository,
+        IUserRoleRepository userRoleRepository,
+        IRoleRepository roleRepository,
+        IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _userRepository = userRepository;
+        _userCredentialRepository = userCredentialRepository;
+        _userProfileRepository = userProfileRepository;
+        _userIdentityRepository = userIdentityRepository;
+        _userRoleRepository = userRoleRepository;
+        _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IReadOnlyList<UserCredential>> FindCredentialsAsync(string identity, CancellationToken cancellationToken = default)
-    {
-        var query = from credential in _context.UserCredentials.AsNoTracking().Include(x => x.User)
-                    where credential.User.Email.ToLower() == identity || (credential.User.UserName != null && credential.User.UserName.ToLower() == identity)
-                    select credential;
-        return await query.Take(2).ToListAsync(cancellationToken);
-    }
+    public Task<IReadOnlyList<UserCredential>> FindCredentialsAsync(string identity, CancellationToken cancellationToken = default) =>
+        _userCredentialRepository.FindByIdentityAsync(identity, cancellationToken);
 
-    public async Task<IReadOnlyList<string>> FindEligibleRolesAsync(Guid userId, CancellationToken cancellationToken = default)
-    {
-        var query = from userRole in _context.UserRoles.AsNoTracking()
-                    join user in _context.Users.AsNoTracking() on userRole.UserId equals user.Id
-                    join role in _context.Roles.AsNoTracking() on userRole.RoleId equals role.Id
-                    where user.Id == userId && user.IsEmailVerified && user.Status == UserStatus.Active
-                    orderby role.Code
-                    select role.Code;
-        return await query.Distinct().ToListAsync(cancellationToken);
-    }
+    public Task<IReadOnlyList<string>> FindEligibleRolesAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        _userRoleRepository.FindEligibleRoleCodesAsync(userId, cancellationToken);
 
     public Task<User?> FindUserAsync(Guid userId, CancellationToken cancellationToken = default) =>
-        _context.Users.AsNoTracking().SingleOrDefaultAsync(user => user.Id == userId, cancellationToken);
+        _userRepository.FindByIdAsync(userId, cancellationToken);
 
     public Task<bool> FindEmailExistsAsync(string email, CancellationToken cancellationToken = default) =>
-        _context.Users.IgnoreQueryFilters().AnyAsync(user => user.Email.ToLower() == email, cancellationToken);
+        _userRepository.FindEmailExistsAsync(email, cancellationToken);
 
     public async Task CreateVerifiedUserAsync(string email, string passwordHash, CancellationToken cancellationToken = default)
     {
-        if (await FindEmailExistsAsync(email, cancellationToken)) throw new InvalidOperationException("Registration cannot be completed.");
-        var role = await _context.Roles.SingleOrDefaultAsync(x => x.Code == "TENANT", cancellationToken)
+        if (await FindEmailExistsAsync(email, cancellationToken))
+        {
+            throw new InvalidOperationException("Registration cannot be completed.");
+        }
+
+        var role = await _roleRepository.FindByCodeAsync(RoleCodes.Tenant, cancellationToken)
             ?? throw new InvalidOperationException("Default registration role is unavailable.");
         var user = NewUser(email);
-        _context.Users.Add(user);
-        _context.UserCredentials.Add(new UserCredential { Id = Guid.CreateVersion7(), UserId = user.Id, PasswordHash = passwordHash });
-        _context.UserProfiles.Add(new UserProfile { Id = Guid.CreateVersion7(), UserId = user.Id });
-        _context.UserRoles.Add(new UserRole { Id = Guid.CreateVersion7(), UserId = user.Id, RoleId = role.Id });
+        _userRepository.Add(user);
+        _userCredentialRepository.Add(new UserCredential
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            PasswordHash = passwordHash
+        });
+        _userProfileRepository.Add(new UserProfile
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id
+        });
+        _userRoleRepository.Add(new UserRole
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            RoleId = role.Id
+        });
         await _unitOfWork.SaveChangesAsync(user.Id.ToString(), cancellationToken);
     }
 
     public async Task<Guid> ResolveGoogleUserAsync(string subject, string? email, bool emailVerified, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(subject) || subject.Length > 255) throw new InvalidOperationException("Invalid Google identity.");
-        var existing = await _context.UserIdentities.AsNoTracking().Where(x => x.Provider == UserIdentityProvider.Google && x.ProviderSubject == subject)
-            .Select(x => (Guid?)x.UserId).SingleOrDefaultAsync(cancellationToken);
-        if (existing.HasValue) return existing.Value;
-        if (!emailVerified || string.IsNullOrWhiteSpace(email) || email.Length > 255) throw new InvalidOperationException("A verified Google email is required.");
+        if (string.IsNullOrWhiteSpace(subject) || subject.Length > 255)
+        {
+            throw new UnauthorizedException("Invalid Google identity.");
+        }
+
+        var existing = await _userIdentityRepository.FindGoogleUserIdAsync(subject, cancellationToken);
+
+        if (existing.HasValue)
+        {
+            return existing.Value;
+        }
+
+        if (!emailVerified || string.IsNullOrWhiteSpace(email) || email.Length > 255)
+        {
+            throw new UnauthorizedException("A verified Google email is required.");
+        }
+
         var normalized = email.Trim().ToLowerInvariant();
-        if (await FindEmailExistsAsync(normalized, cancellationToken)) throw new InvalidOperationException("Account linking is required.");
-        var role = await _context.Roles.SingleOrDefaultAsync(x => x.Code == "TENANT", cancellationToken)
+        if (await FindEmailExistsAsync(normalized, cancellationToken))
+        {
+            throw new ConflictException("Sign in to your existing account to link Google.");
+        }
+
+        var role = await _roleRepository.FindByCodeAsync(RoleCodes.Tenant, cancellationToken)
             ?? throw new InvalidOperationException("Default registration role is unavailable.");
         var user = NewUser(normalized);
-        _context.Users.Add(user);
-        _context.UserProfiles.Add(new UserProfile { Id = Guid.CreateVersion7(), UserId = user.Id });
-        _context.UserRoles.Add(new UserRole { Id = Guid.CreateVersion7(), UserId = user.Id, RoleId = role.Id });
-        _context.UserIdentities.Add(new UserIdentity { Id = Guid.CreateVersion7(), UserId = user.Id, Provider = UserIdentityProvider.Google, ProviderSubject = subject });
+        _userRepository.Add(user);
+        _userProfileRepository.Add(new UserProfile
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id
+        });
+        _userRoleRepository.Add(new UserRole
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            RoleId = role.Id
+        });
+        _userIdentityRepository.Add(new UserIdentity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Provider = UserIdentityProvider.Google,
+            ProviderSubject = subject
+        });
         await _unitOfWork.SaveChangesAsync(user.Id.ToString(), cancellationToken);
         return user.Id;
     }
 
-    private static User NewUser(string email) => new() { Id = Guid.CreateVersion7(), Email = email, Status = UserStatus.Active, IsEmailVerified = true };
+    private static User NewUser(string email) => new()
+    {
+        Id = Guid.CreateVersion7(),
+        Email = email,
+        Status = UserStatus.Active,
+        IsEmailVerified = true
+    };
 }

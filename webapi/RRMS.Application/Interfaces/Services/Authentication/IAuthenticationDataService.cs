@@ -2,6 +2,10 @@ using RRMS.Domain.Entities;
 
 namespace RRMS.Application.Interfaces.Services.Authentication;
 
+/// <summary>
+/// Provides the account data needed for authentication and registration.
+/// It finds credentials and eligible roles, creates verified accounts, and resolves Google identities.
+/// </summary>
 public interface IAuthenticationDataService
 {
     Task<IReadOnlyList<UserCredential>> FindCredentialsAsync(string identity, CancellationToken cancellationToken = default);

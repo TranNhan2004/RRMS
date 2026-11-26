@@ -12,9 +12,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 
         builder.Property(x => x.Action)
             .HasColumnName("action")
-            .HasConversion(
-                action => action == RRMS.Domain.Enums.Common.AuditAction.Create ? "INSERT" : action == RRMS.Domain.Enums.Common.AuditAction.Update ? "UPDATE" : "DELETE",
-                value => value == "INSERT" ? RRMS.Domain.Enums.Common.AuditAction.Create : value == "UPDATE" ? RRMS.Domain.Enums.Common.AuditAction.Update : RRMS.Domain.Enums.Common.AuditAction.Delete)
+            .HasConversion<string>()
             .HasMaxLength(20);
 
         builder.Property(x => x.TraceId)

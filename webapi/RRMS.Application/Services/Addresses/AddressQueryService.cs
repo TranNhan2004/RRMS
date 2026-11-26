@@ -5,8 +5,28 @@ using RRMS.Application.Models.Common;
 
 namespace RRMS.Application.Services.Addresses;
 
-public class AddressQueryService(IProvinceRepository provinces, IWardRepository wards) : IAddressQueryService
+public class AddressQueryService : IAddressQueryService
 {
-    public Task<FilterResult<GetFilteredProvinceResponseItemModel>> GetFilteredProvincesAsync(GetFilteredProvincesRequestModel request, CancellationToken cancellationToken = default) => provinces.FindFilteredProvincesAsync(request, cancellationToken);
-    public Task<FilterResult<GetFilteredWardResponseItemModel>> GetFilteredWardsAsync(GetFilteredWardsRequestModel request, CancellationToken cancellationToken = default) => wards.FindFilteredWardsAsync(request, cancellationToken);
+    private readonly IProvinceRepository _provinceRepository;
+    private readonly IWardRepository _wardRepository;
+
+    public AddressQueryService(IProvinceRepository provinceRepository, IWardRepository wardRepository)
+    {
+        _provinceRepository = provinceRepository;
+        _wardRepository = wardRepository;
+    }
+
+    public Task<FilterResult<GetFilteredProvinceResponseItemModel>> GetFilteredProvincesAsync(
+        GetFilteredProvincesRequestModel request,
+        CancellationToken cancellationToken = default)
+    {
+        return _provinceRepository.FindFilteredProvincesAsync(request, cancellationToken);
+    }
+
+    public Task<FilterResult<GetFilteredWardResponseItemModel>> GetFilteredWardsAsync(
+        GetFilteredWardsRequestModel request,
+        CancellationToken cancellationToken = default)
+    {
+        return _wardRepository.FindFilteredWardsAsync(request, cancellationToken);
+    }
 }

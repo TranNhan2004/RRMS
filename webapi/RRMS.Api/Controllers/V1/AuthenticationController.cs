@@ -1,87 +1,93 @@
+using RRMS.Domain.Constants.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using RRMS.Infrastructure.Services.Authentication;
 using RRMS.Api.Dtos.V1.Authentication;
 using RRMS.Application.Interfaces.Services.Authentication;
-using RRMS.Application.Models.Authentication;
-using RRMS.Infrastructure.Options;
+using IAuthenticationService = RRMS.Application.Interfaces.Services.Authentication.IAuthenticationService;
 
 namespace RRMS.Api.Controllers.V1;
 
 [Route("api/v{version:apiVersion}/auth")]
 [ApiVersion("1.0")]
 [ApiController]
-[AllowAnonymous]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthenticationService _authentication;
-    private readonly CredentialAuthOptions _options;
-    private readonly CsrfOptions _csrf;
+    private readonly IAuthenticationService _authenticationService;
+    private readonly IRegistrationService _registrationService;
+    private readonly AuthenticationSessionService _authenticationSessionService;
 
-    public AuthenticationController(IAuthenticationService authentication, IOptions<AuthOptions> options, IOptions<CsrfOptions> csrf)
+    public AuthenticationController(
+        IAuthenticationService authenticationService,
+        IRegistrationService registrationService,
+        AuthenticationSessionService authenticationSessionService)
     {
-        _authentication = authentication;
-        _options = options.Value.Credentials;
-        _csrf = csrf.Value;
+        _authenticationService = authenticationService;
+        _registrationService = registrationService;
+        _authenticationSessionService = authenticationSessionService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status202Accepted, Type = typeof(RegistrationResponse))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RegistrationResponse))]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> RegisterAsync([FromBody] RegistrationRequest request, CancellationToken cancellationToken)
     {
-        var model = RegistrationRequest.ToModel(request, RemoteAddress());
-        var result = await _authentication.RegisterAsync(model, cancellationToken);
+        var model = RegistrationRequest.ToModel(request);
+        var result = await _registrationService.RegisterAsync(model, cancellationToken);
         Response.Headers.CacheControl = "no-store";
-        return StatusCode(request.Stage == "INITIATE" ? StatusCodes.Status202Accepted : StatusCodes.Status201Created, RegistrationResponse.FromModel(result));
+        var dtoResponse = RegistrationResponse.FromModel(result);
+        var statusCode = request.Stage == RegistrationStages.Initiate
+            ? StatusCodes.Status202Accepted
+            : StatusCodes.Status201Created;
+        return StatusCode(statusCode, dtoResponse);
     }
 
+    [AllowAnonymous]
     [HttpPost("verify-email")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VerifyEmailResponse))]
-    public async Task<IActionResult> VerifyEmailAsync([FromBody] VerifyEmailRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> VerifyEmailAsync([FromBody] VerifyEmailRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authentication.VerifyEmailAsync(VerifyEmailRequest.ToModel(request), cancellationToken);
+        var model = VerifyEmailRequest.ToModel(request);
+        var result = await _registrationService.VerifyEmailAsync(model, cancellationToken);
         Response.Headers.CacheControl = "no-store";
-        return Ok(VerifyEmailResponse.FromModel(result));
+        var dtoResponse = VerifyEmailResponse.FromModel(result);
+        return Ok(dtoResponse);
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
-    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var model = LoginRequest.ToModel(request, RemoteAddress(), Request.Cookies["RRMS_ROLE_SELECTION"]);
-        var result = await _authentication.LoginAsync(model, cancellationToken);
+        var model = LoginRequest.ToModel(request);
+        var result = await _authenticationService.LoginAsync(model, cancellationToken);
+        await _authenticationSessionService.CompleteAsync(result, cancellationToken);
+        var dtoResponse = LoginResponse.FromModel(result);
+        return Ok(dtoResponse);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("pending-session")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
+    public async Task<IActionResult> GetPendingSessionAsync(CancellationToken cancellationToken)
+    {
+        var result = await _authenticationService.GetPendingSessionAsync(cancellationToken);
         Response.Headers.CacheControl = "no-store";
-        SetAuthenticationCookies(result);
-        return Ok(LoginResponse.FromModel(result));
+        var dtoResponse = LoginResponse.FromModel(result);
+        return Ok(dtoResponse);
     }
 
-    [HttpPost("refresh")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshResponse))]
-    public async Task<IActionResult> RefreshAsync(CancellationToken cancellationToken = default)
+    [AllowAnonymous]
+    [HttpPost("select-role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
+    public async Task<IActionResult> SelectRoleAsync([FromBody] SelectRoleRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authentication.RefreshAsync(RefreshRequest.ToModel(Request.Cookies["RRMS_REFRESH"]), cancellationToken);
-        Response.Headers.CacheControl = "no-store";
-        return Ok(RefreshResponse.FromModel(result));
+        var model = SelectRoleRequest.ToModel(request);
+        var result = await _authenticationService.SelectRoleAsync(model, cancellationToken);
+        await _authenticationSessionService.CompleteAsync(result, cancellationToken);
+        var dtoResponse = LoginResponse.FromModel(result);
+        return Ok(dtoResponse);
     }
 
-    private void SetAuthenticationCookies(AuthenticationResultResponseModel result)
-    {
-        if (result.RefreshToken == null || result.CsrfToken == null) return;
-        Response.Cookies.Append("RRMS_REFRESH", result.RefreshToken, Cookie(true, _options.RefreshCookiePath, _options.RefreshToken.Expiration));
-        Response.Cookies.Append(_csrf.CookieName, result.CsrfToken, Cookie(false, "/", _options.RefreshToken.Expiration));
-        if (Request.Cookies.ContainsKey("RRMS_ROLE_SELECTION"))
-            Response.Cookies.Append("RRMS_ROLE_SELECTION", "", Cookie(true, "/api/v1/auth/login", TimeSpan.Zero));
-    }
-
-    private CookieOptions Cookie(bool httpOnly, string path, TimeSpan lifetime) => new()
-    {
-        HttpOnly = httpOnly,
-        Secure = _options.SecureCookies,
-        SameSite = Enum.TryParse<SameSiteMode>(_options.SameSite, true, out var sameSite) ? sameSite : SameSiteMode.Strict,
-        Path = path,
-        MaxAge = lifetime
-    };
-
-    private string RemoteAddress() => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 }

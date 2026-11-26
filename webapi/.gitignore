@@ -25,11 +25,7 @@ obj\*/
 TestResults/
 coverage/
 
-appsettings.Development.json
-appsettings.Dev.json
-appsettings.Test.json
-appsettings.Staging.json
-appsettings.Production.json
+appsettings.*.json
 
 .env
 .env.*

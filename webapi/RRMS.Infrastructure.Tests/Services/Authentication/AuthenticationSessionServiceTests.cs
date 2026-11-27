@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using RRMS.Application.Interfaces.Contexts;
 using RRMS.Application.Models.Authentication;
@@ -53,12 +54,11 @@ public class AuthenticationSessionServiceTests
             {
                 Cookie = new AuthCookieOptions
                 {
-                    Name = "__Host-pending",
-                    Path = "/"
+                    Name = "pending"
                 }
             }
         });
-        var cookies = new SessionCookieService(null!, null!, options);
+        var cookies = new SessionCookieService(null!, null!, options, Mock.Of<IHostEnvironment>());
         var logger = new AuthenticationEventLogger(new Mock<ICurrentRequestContext>().Object, new Mock<Serilog.ILogger>().Object);
         var service = new AuthenticationSessionService(cookies, accessor, logger);
         service.SetPendingToken("pending-token");
@@ -70,7 +70,7 @@ public class AuthenticationSessionServiceTests
         }, CancellationToken.None);
 
         // Assert
-        context.Response.Headers.SetCookie.ToString().Should().Contain("__Host-pending=pending-token").And.Contain("httponly").And.Contain("secure");
+        context.Response.Headers.SetCookie.ToString().Should().Contain("pending=pending-token").And.Contain("httponly").And.Contain("secure");
         context.Response.Headers.CacheControl.ToString().Should().Be("no-store");
         var repeat = () => service.CompleteAsync(new AuthenticationResultResponseModel
         {

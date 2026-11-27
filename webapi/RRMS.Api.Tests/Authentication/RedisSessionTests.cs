@@ -158,6 +158,7 @@ public class RedisSessionTests
             AbsoluteExpiration = TimeSpan.FromHours(24),
             ExternalExpiration = TimeSpan.FromMinutes(5)
         });
+        services.AddSingleton(Moq.Mock.Of<Microsoft.Extensions.Hosting.IHostEnvironment>(environment => environment.EnvironmentName == "Production"));
         services.AddApplicationAuthentication(SessionConfiguration());
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -217,6 +218,7 @@ public class RedisSessionTests
             AbsoluteExpiration = TimeSpan.FromHours(24),
             ExternalExpiration = TimeSpan.FromMinutes(5)
         });
+        services.AddSingleton(Moq.Mock.Of<Microsoft.Extensions.Hosting.IHostEnvironment>(environment => environment.EnvironmentName == "Production"));
         services.AddApplicationAuthentication(SessionConfiguration());
         using var provider = services.BuildServiceProvider();
         using var loginScope = provider.CreateScope();
@@ -265,7 +267,8 @@ public class RedisSessionTests
                 AbsoluteExpiration = TimeSpan.FromHours(24),
                 ExternalExpiration = TimeSpan.FromMinutes(5)
             });
-            services.AddApplicationAuthentication(SessionConfiguration());
+            services.AddSingleton(Moq.Mock.Of<Microsoft.Extensions.Hosting.IHostEnvironment>(environment => environment.EnvironmentName == "Production"));
+        services.AddApplicationAuthentication(SessionConfiguration());
             return services.BuildServiceProvider();
         }
         using var first = CreateProvider();

@@ -450,6 +450,6 @@ public class AuthenticationServiceTests
             }
         });
         return new AuthenticationService(_challenges.Object, _data.Object, _passwords.Object, options, accessor,
-            new SessionCookieService(null!, null!, options), new Mock<ICurrentUserContext>().Object, request.Object, new AuthenticationSessionService(null!, accessor, null!), new AuthenticationEventLogger(request.Object, _logger.Object));
+            new SessionCookieService(null!, null!, options, Mock.Of<Microsoft.Extensions.Hosting.IHostEnvironment>()), new Mock<ICurrentUserContext>().Object, request.Object, new AuthenticationSessionService(null!, accessor, null!), new AuthenticationEventLogger(request.Object, _logger.Object));
     }
 }

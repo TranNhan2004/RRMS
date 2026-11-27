@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using RRMS.Domain.Constants.Authentication;
 using RRMS.Application.Models.Authentication;
@@ -22,9 +23,11 @@ public class SessionCookieService
     private readonly IOptionsMonitor<CookieAuthenticationOptions> _options;
     private readonly SessionAuthOptions _session;
     private readonly AuthOptions _auth;
+    private readonly IHostEnvironment _environment;
 
-    public SessionCookieService(RedisTicketStore store, IOptionsMonitor<CookieAuthenticationOptions> options, IOptions<AuthOptions> auth)
+    public SessionCookieService(RedisTicketStore store, IOptionsMonitor<CookieAuthenticationOptions> options, IOptions<AuthOptions> auth, IHostEnvironment environment)
     {
+        _environment = environment;
         _store = store;
         _options = options;
         _auth = auth.Value;
@@ -35,20 +38,20 @@ public class SessionCookieService
 
     public void WritePending(HttpContext context, string token)
     {
-        context.Response.Cookies.Append(_auth.PendingSession.Cookie.Name, token, PendingOptions(_auth.Credentials.RoleSelectionTtl));
+        context.Response.Cookies.Append(_auth.PendingSession.Cookie.Name, token, PendingOptions(context, _auth.Credentials.RoleSelectionTtl));
     }
 
     public void ClearPending(HttpContext context)
     {
-        context.Response.Cookies.Delete(_auth.PendingSession.Cookie.Name, PendingOptions(TimeSpan.Zero));
+        context.Response.Cookies.Delete(_auth.PendingSession.Cookie.Name, PendingOptions(context, TimeSpan.Zero));
     }
 
-    private CookieOptions PendingOptions(TimeSpan lifetime) => new()
+    private CookieOptions PendingOptions(HttpContext context, TimeSpan lifetime) => new()
     {
         HttpOnly = true,
-        Secure = true,
-        SameSite = _auth.PendingSession.Cookie.SameSite,
-        Path = _auth.PendingSession.Cookie.Path,
+        Secure = CookiePolicy.IsSecure(_environment, context),
+        SameSite = SameSiteMode.Lax,
+        Path = "/",
         MaxAge = lifetime
     };
 

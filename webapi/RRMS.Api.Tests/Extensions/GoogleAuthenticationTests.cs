@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using StackExchange.Redis;
 using RRMS.Api.Extensions;
@@ -39,6 +40,7 @@ public class GoogleAuthenticationTests
         };
         var config = new ConfigurationBuilder().AddInMemoryCollection(values).Build();
         var services = new ServiceCollection();
+        services.AddSingleton(Mock.Of<IHostEnvironment>(environment => environment.EnvironmentName == "Production"));
         services.AddLogging();
         services.AddDataProtection();
         services.AddSingleton(new Mock<IConnectionMultiplexer>().Object);
@@ -54,7 +56,8 @@ public class GoogleAuthenticationTests
         var session = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get("Session");
         session.Cookie.Name.Should().Be("__Host-custom-session");
         session.Cookie.Path.Should().Be("/");
-        session.Cookie.SameSite.Should().Be(SameSiteMode.Strict);
+        session.Cookie.SameSite.Should().Be(SameSiteMode.Lax);
+        session.Cookie.SecurePolicy.Should().Be(CookieSecurePolicy.Always);
         options.SignInScheme.Should().Be("External");
         options.CallbackPath.Value.Should().Be("/signin-google");
         options.UsePkce.Should().BeTrue();
@@ -76,6 +79,7 @@ public class GoogleAuthenticationTests
             ["Auth:Google:ClientSecret"] = "secret"
         }).Build();
         var services = new ServiceCollection();
+        services.AddSingleton(Mock.Of<IHostEnvironment>(environment => environment.EnvironmentName == "Production"));
         services.AddLogging();
         services.AddDataProtection();
         var redis = new Mock<IConnectionMultiplexer>();

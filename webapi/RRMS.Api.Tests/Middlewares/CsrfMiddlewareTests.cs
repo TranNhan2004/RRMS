@@ -114,7 +114,7 @@ public class CsrfMiddlewareTests
         antiforgery.VerifyNoOtherCalls();
     }
 
-    private static CsrfService NewService(IAntiforgery antiforgery) => new(antiforgery, Options.Create(new CsrfOptions()));
+    private static CsrfService NewService(IAntiforgery antiforgery) => new(antiforgery, Options.Create(new CsrfOptions()), Mock.Of<Microsoft.Extensions.Hosting.IHostEnvironment>());
 
     private static DefaultHttpContext NewContext(string method, bool skip = false)
     {

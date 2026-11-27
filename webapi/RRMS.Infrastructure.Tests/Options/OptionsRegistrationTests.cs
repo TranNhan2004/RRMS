@@ -27,18 +27,11 @@ public class OptionsRegistrationTests
         auth.Credentials.VerificationUrl.Should().Be("https://example.org/verify");
         auth.Google.ClientId.Should().Be("google-client");
         auth.Session.SlidingExpiration.Should().Be(TimeSpan.FromMinutes(30));
-        auth.Session.Cookie.Name.Should().Be("__Host-custom-session");
-        auth.Session.Cookie.Path.Should().Be("/");
-        auth.Session.Cookie.SecurePolicy.Should().Be(Microsoft.AspNetCore.Http.CookieSecurePolicy.Always);
-        auth.Session.Cookie.SameSite.Should().Be(Microsoft.AspNetCore.Http.SameSiteMode.Strict);
-        auth.PendingSession.Cookie.Name.Should().Be("__Host-custom-pending");
-        auth.PendingSession.Cookie.Path.Should().Be("/");
-        auth.PendingSession.Cookie.SameSite.Should().Be(Microsoft.AspNetCore.Http.SameSiteMode.Strict);
+        auth.Session.Cookie.Name.Should().Be("custom-session");
+        auth.PendingSession.Cookie.Name.Should().Be("custom-pending");
         csrf.RequestTokenCookieName.Should().Be("CUSTOM-XSRF");
         csrf.HeaderName.Should().Be("X-XSRF-TOKEN");
-        csrf.CookieTokenName.Should().Be("__Host-antiforgery");
-        csrf.Secure.Should().BeTrue();
-        csrf.SameSite.Should().Be(Microsoft.AspNetCore.Http.SameSiteMode.Strict);
+        csrf.CookieTokenName.Should().Be("antiforgery");
         email.Host.Should().Be("smtp.example.org");
         email.QueueCapacity.Should().Be(32);
         cors.AllowedOrigins.Should().ContainSingle().Which.Should().Be("https://example.org");
@@ -46,9 +39,7 @@ public class OptionsRegistrationTests
 
     [Theory]
     [InlineData("Csrf:RequestTokenCookieName", "")]
-    [InlineData("Csrf:CookieTokenName", "bad")]
-    [InlineData("Csrf:Secure", "false")]
-    [InlineData("Csrf:SameSite", "99")]
+    [InlineData("Csrf:CookieTokenName", "__Host-bad")]
     public void CsrfOptions_ShouldRejectInvalidConfiguration_WhenCookieSettingsAreInvalid(string key, string value)
     {
         // Arrange
@@ -115,11 +106,8 @@ public class OptionsRegistrationTests
     [InlineData("Auth:Session:AbsoluteExpiration", "00:00:00")]
     [InlineData("Auth:Session:ExternalExpiration", "00:00:00")]
     [InlineData("Auth:Session:SlidingExpiration", "2.00:00:00")]
-    [InlineData("Auth:Session:Cookie:Name", "session")]
-    [InlineData("Auth:Session:Cookie:Path", "/auth")]
-    [InlineData("Auth:Session:Cookie:SecurePolicy", "None")]
-    [InlineData("Auth:PendingSession:Cookie:Name", "pending")]
-    [InlineData("Auth:PendingSession:Cookie:Path", "/auth")]
+    [InlineData("Auth:Session:Cookie:Name", "__Host-session")]
+    [InlineData("Auth:PendingSession:Cookie:Name", "__Host-pending")]
     [InlineData("Auth:Google:ClientId", "")]
     [InlineData("Auth:Google:ClientSecret", "")]
     public void AuthOptions_ShouldRejectInvalidConfiguration_WhenRequiredValuesAreInvalid(string key, string value)
@@ -278,9 +266,7 @@ public class OptionsRegistrationTests
     {
         ["Csrf:RequestTokenCookieName"] = "CUSTOM-XSRF",
         ["Csrf:HeaderName"] = "X-XSRF-TOKEN",
-        ["Csrf:CookieTokenName"] = "__Host-antiforgery",
-        ["Csrf:Secure"] = "true",
-        ["Csrf:SameSite"] = "Strict",
+        ["Csrf:CookieTokenName"] = "antiforgery",
         ["ConnectionStrings:Redis"] = "localhost:6379",
         ["Export:MaxQueueItems"] = "10",
         ["ObjectStorage:Endpoint"] = "https://storage.example.org",
@@ -293,13 +279,8 @@ public class OptionsRegistrationTests
         ["Auth:Credentials:RegistrationVerificationTtl"] = "00:15:00",
         ["Auth:Credentials:RegistrationCompletionTtl"] = "00:10:00",
         ["Auth:Credentials:RoleSelectionTtl"] = "00:05:00",
-        ["Auth:PendingSession:Cookie:Name"] = "__Host-custom-pending",
-        ["Auth:PendingSession:Cookie:Path"] = "/",
-        ["Auth:PendingSession:Cookie:SameSite"] = "Strict",
-        ["Auth:Session:Cookie:Name"] = "__Host-custom-session",
-        ["Auth:Session:Cookie:Path"] = "/",
-        ["Auth:Session:Cookie:SecurePolicy"] = "Always",
-        ["Auth:Session:Cookie:SameSite"] = "Strict",
+        ["Auth:PendingSession:Cookie:Name"] = "custom-pending",
+        ["Auth:Session:Cookie:Name"] = "custom-session",
         ["Auth:Session:SlidingExpiration"] = "00:30:00",
         ["Auth:Session:AbsoluteExpiration"] = "1.00:00:00",
         ["Auth:Session:ExternalExpiration"] = "00:05:00",

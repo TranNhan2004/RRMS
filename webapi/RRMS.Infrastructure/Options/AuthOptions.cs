@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace RRMS.Infrastructure.Options;
 
 public class AuthOptions
@@ -42,7 +40,4 @@ public class PendingSessionAuthOptions
 public class AuthCookieOptions
 {
     public string Name { get; set; } = null!;
-    public string Path { get; set; } = "/";
-    public CookieSecurePolicy SecurePolicy { get; set; } = CookieSecurePolicy.Always;
-    public SameSiteMode SameSite { get; set; } = SameSiteMode.Lax;
 }

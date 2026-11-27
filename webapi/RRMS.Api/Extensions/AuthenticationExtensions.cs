@@ -3,13 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RRMS.Infrastructure.Services.Authentication;
 using RRMS.Domain.Constants.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
 using StackExchange.Redis;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using RRMS.Application.Interfaces.Services.Authentication;
 using RRMS.Infrastructure.Options;
 
@@ -31,14 +28,16 @@ public static class AuthenticationExtensions
         services.AddOptions<CookieAuthenticationOptions>(AuthenticationSchemes.Session)
             .Configure<RedisTicketStore>((options, store) => options.SessionStore = store);
 
+        services.AddOptions<CookieAuthenticationOptions>(AuthenticationSchemes.Session)
+            .Configure<IHostEnvironment>((options, environment) => options.Cookie.SecurePolicy = CookiePolicy.SecurePolicy(environment));
+
         var authentication = services.AddAuthentication(AuthenticationSchemes.Session);
         authentication.AddCookie(AuthenticationSchemes.Session, options =>
         {
             options.Cookie.Name = auth.Session.Cookie.Name;
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = auth.Session.Cookie.SecurePolicy;
-            options.Cookie.SameSite = auth.Session.Cookie.SameSite;
-            options.Cookie.Path = auth.Session.Cookie.Path;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.Path = "/";
             options.ExpireTimeSpan = auth.Session.SlidingExpiration;
             options.SlidingExpiration = true;
             options.Events.OnCheckSlidingExpiration = context =>

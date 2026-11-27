@@ -70,8 +70,8 @@ public static class DependencyInjection
             .Validate(options => options.Session != null && options.Session.AbsoluteExpiration > TimeSpan.Zero, "Auth:Session:AbsoluteExpiration must be positive.")
             .Validate(options => options.Session != null && options.Session.ExternalExpiration > TimeSpan.Zero, "Auth:Session:ExternalExpiration must be positive.")
             .Validate(options => options.Session != null && options.Session.SlidingExpiration <= options.Session.AbsoluteExpiration, "Auth:Session:SlidingExpiration must not exceed AbsoluteExpiration.")
-            .Validate(options => options.Session?.Cookie != null && options.Session.Cookie.Name?.StartsWith("__Host-", StringComparison.Ordinal) == true && options.Session.Cookie.Path == "/" && options.Session.Cookie.SecurePolicy == Microsoft.AspNetCore.Http.CookieSecurePolicy.Always, "Auth:Session:Cookie must be a secure __Host- cookie with path /.")
-            .Validate(options => options.PendingSession?.Cookie != null && options.PendingSession.Cookie.Name?.StartsWith("__Host-", StringComparison.Ordinal) == true && options.PendingSession.Cookie.Path == "/", "Auth:PendingSession:Cookie must be a __Host- cookie with path /.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Session?.Cookie?.Name) && !options.Session.Cookie.Name.StartsWith("__Host-", StringComparison.Ordinal), "Auth:Session:Cookie:Name must be a non-prefixed cookie name.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.PendingSession?.Cookie?.Name) && !options.PendingSession.Cookie.Name.StartsWith("__Host-", StringComparison.Ordinal), "Auth:PendingSession:Cookie:Name must be a non-prefixed cookie name.")
             .Validate(options => options.Google != null && !string.IsNullOrWhiteSpace(options.Google.ClientId), "Auth:Google:ClientId is required.")
             .Validate(options => options.Google != null && !string.IsNullOrWhiteSpace(options.Google.ClientSecret), "Auth:Google:ClientSecret is required.")
             .ValidateOnStart();
@@ -80,10 +80,8 @@ public static class DependencyInjection
             .AddOptions<CsrfOptions>()
             .BindConfiguration(CsrfOptions.SectionName)
             .Validate(options => !string.IsNullOrWhiteSpace(options.HeaderName), "Csrf:HeaderName is required.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.CookieTokenName) && options.CookieTokenName.StartsWith("__Host-", StringComparison.Ordinal), "Csrf:CookieTokenName must be a __Host- cookie name.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.CookieTokenName) && !options.CookieTokenName.StartsWith("__Host-", StringComparison.Ordinal), "Csrf:CookieTokenName must be a non-prefixed cookie name.")
             .Validate(options => !string.IsNullOrWhiteSpace(options.RequestTokenCookieName), "Csrf:RequestTokenCookieName is required.")
-            .Validate(options => options.Secure, "Csrf:Secure must be enabled for the __Host- antiforgery cookie.")
-            .Validate(options => Enum.IsDefined(options.SameSite), "Csrf:SameSite must be valid.")
             .ValidateOnStart();
 
         services

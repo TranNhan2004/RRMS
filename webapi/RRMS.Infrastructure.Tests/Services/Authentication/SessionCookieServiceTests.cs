@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using RRMS.Application.Models.Authentication;
 using RRMS.Domain.Constants.Authentication;
@@ -41,7 +42,7 @@ public class SessionCookieServiceTests
                 SlidingExpiration = TimeSpan.FromMinutes(30),
                 AbsoluteExpiration = TimeSpan.FromHours(24)
             }
-        }));
+        }), Mock.Of<IHostEnvironment>());
         var userId = Guid.NewGuid();
 
         // Act
@@ -60,8 +61,11 @@ public class SessionCookieServiceTests
         properties.ExpiresUtc.Should().BeAfter(DateTimeOffset.UtcNow);
     }
 
-    [Fact]
-    public void WritePending_ShouldUseSecureHttpOnlyCookie_WhenPendingSessionIsCreated()
+    [Theory]
+    [InlineData("Development", "http", false)]
+    [InlineData("Development", "https", true)]
+    [InlineData("Production", "http", true)]
+    public void WritePending_ShouldApplyCookiePolicy_WhenPendingSessionIsCreated(string environmentName, string scheme, bool secure)
     {
         // Arrange
         var service = new SessionCookieService(null!, null!, Microsoft.Extensions.Options.Options.Create(new AuthOptions
@@ -75,19 +79,19 @@ public class SessionCookieServiceTests
             {
                 Cookie = new AuthCookieOptions
                 {
-                    Name = "__Host-pending-session",
-                    Path = "/",
-                    SameSite = SameSiteMode.Lax
+                    Name = "pending-session"
                 }
             }
-        }));
+        }), Mock.Of<IHostEnvironment>(environment => environment.EnvironmentName == environmentName));
         var context = new DefaultHttpContext();
+        context.Request.Scheme = scheme;
 
         // Act
         service.WritePending(context, "token");
 
         // Assert
         var cookie = context.Response.Headers.SetCookie.ToString();
-        cookie.Should().Contain("__Host-pending-session=token").And.Contain("secure").And.Contain("httponly").And.Contain("path=/");
+        cookie.Should().Contain("pending-session=token").And.Contain("httponly").And.Contain("path=/").And.Contain("samesite=lax");
+        cookie.Contains("secure", StringComparison.OrdinalIgnoreCase).Should().Be(secure);
     }
 }

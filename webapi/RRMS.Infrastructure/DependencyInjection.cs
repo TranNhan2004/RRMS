@@ -1,16 +1,16 @@
 using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using RRMS.Application.Interfaces.Contexts;
 using RRMS.Application.Interfaces.Services.Authentication;
 using RRMS.Infrastructure.Services.Authentication;
+using RRMS.Infrastructure.Services.Email;
+using RRMS.Application.Interfaces.Services.Email;
 using RRMS.Application.Interfaces.Repositories;
 using RRMS.Application.Interfaces.Services.Cache;
 using RRMS.Infrastructure.Contexts;
@@ -33,14 +33,6 @@ public static class DependencyInjection
     public static IServiceCollection AddAppOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddOptions<RedisOptions>()
-            .Bind(configuration.GetRequiredSection(RedisOptions.SectionName))
-            .Validate(
-                options => !string.IsNullOrWhiteSpace(options.ConnectionString),
-                $"{RedisOptions.SectionName}:ConnectionString is required.")
-            .ValidateOnStart();
-
-        services
             .AddOptions<AuditLogOptions>()
             .BindConfiguration(AuditLogOptions.SectionName)
             .Validate(options => options.RetryCount >= 0, "AuditLog:RetryCount must be greater than or equal to 0.")
@@ -57,16 +49,49 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services
-            .AddOptions<AuthOptions>()
-            .BindConfiguration(AuthOptions.SectionName);
+            .AddOptions<EmailOptions>()
+            .BindConfiguration(EmailOptions.SectionName)
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Host), "Email:Host is required.")
+            .Validate(options => options.Port is >= 1 and <= 65535, "Email:Port must be between 1 and 65535.")
+            .Validate(options => OptionsValidation.ValidEmailAddress(options.DefaultFromEmail), "Email:DefaultFromEmail must be a valid email address.")
+            .Validate(options => OptionsValidation.MatchingCredentials(options.Username, options.Password), "Email:Username and Email:Password must both be provided or both omitted.")
+            .Validate(options => options.QueueCapacity > 0, "Email:QueueCapacity must be greater than 0.")
+            .ValidateOnStart();
 
         services
-            .AddOptions<CorsOptions>()
-            .BindConfiguration(CorsOptions.SectionName);
+            .AddOptions<AuthOptions>()
+            .BindConfiguration(AuthOptions.SectionName)
+            .Validate(options => OptionsValidation.FrontendUrl(options.FrontendPath), "Auth:FrontendPath must be an HTTPS URL, or an HTTP URL on localhost.")
+            .Validate<IHostEnvironment>((options, environment) => options.Credentials != null && OptionsValidation.VerificationUrl(options.Credentials.VerificationUrl, environment.IsDevelopment()), "Auth:Credentials:VerificationUrl must be HTTPS, except in the Development environment.")
+            .Validate(options => options.Credentials != null && options.Credentials.RegistrationVerificationTtl > TimeSpan.Zero, "Auth:Credentials:RegistrationVerificationTtl must be positive.")
+            .Validate(options => options.Credentials != null && options.Credentials.RegistrationCompletionTtl > TimeSpan.Zero, "Auth:Credentials:RegistrationCompletionTtl must be positive.")
+            .Validate(options => options.Credentials != null && options.Credentials.RoleSelectionTtl > TimeSpan.Zero, "Auth:Credentials:RoleSelectionTtl must be positive.")
+            .Validate(options => options.Session != null && options.Session.SlidingExpiration > TimeSpan.Zero, "Auth:Session:SlidingExpiration must be positive.")
+            .Validate(options => options.Session != null && options.Session.AbsoluteExpiration > TimeSpan.Zero, "Auth:Session:AbsoluteExpiration must be positive.")
+            .Validate(options => options.Session != null && options.Session.ExternalExpiration > TimeSpan.Zero, "Auth:Session:ExternalExpiration must be positive.")
+            .Validate(options => options.Session != null && options.Session.SlidingExpiration <= options.Session.AbsoluteExpiration, "Auth:Session:SlidingExpiration must not exceed AbsoluteExpiration.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Session?.Cookie?.Name) && !options.Session.Cookie.Name.StartsWith("__Host-", StringComparison.Ordinal), "Auth:Session:Cookie:Name must be a non-prefixed cookie name.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.PendingSession?.Cookie?.Name) && !options.PendingSession.Cookie.Name.StartsWith("__Host-", StringComparison.Ordinal), "Auth:PendingSession:Cookie:Name must be a non-prefixed cookie name.")
+            .Validate(options => options.Google != null && !string.IsNullOrWhiteSpace(options.Google.ClientId), "Auth:Google:ClientId is required.")
+            .Validate(options => options.Google != null && !string.IsNullOrWhiteSpace(options.Google.ClientSecret), "Auth:Google:ClientSecret is required.")
+            .ValidateOnStart();
 
         services
             .AddOptions<CsrfOptions>()
-            .BindConfiguration(CsrfOptions.SectionName);
+            .BindConfiguration(CsrfOptions.SectionName)
+            .Validate(options => !string.IsNullOrWhiteSpace(options.HeaderName), "Csrf:HeaderName is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.CookieTokenName) && !options.CookieTokenName.StartsWith("__Host-", StringComparison.Ordinal), "Csrf:CookieTokenName must be a non-prefixed cookie name.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.RequestTokenCookieName), "Csrf:RequestTokenCookieName is required.")
+            .ValidateOnStart();
+
+        services
+            .AddOptions<CorsOptions>()
+            .BindConfiguration(CorsOptions.SectionName)
+            .Validate(options => options.AllowedOrigins != null && options.AllowedOrigins.All(OptionsValidation.CorsOrigin), "Cors:AllowedOrigins must contain explicit HTTP or HTTPS origins.")
+            .Validate(options => OptionsValidation.NonEmptyValues(options.AllowedMethods), "Cors:AllowedMethods must not contain empty values.")
+            .Validate(options => OptionsValidation.NonEmptyValues(options.AllowedHeaders), "Cors:AllowedHeaders must not contain empty values.")
+            .Validate(options => options.AllowedOrigins == null || options.AllowedOrigins.Length == 0 || (options.AllowedMethods?.Length > 0 && options.AllowedHeaders?.Length > 0), "CORS methods and headers are required when origins are configured.")
+            .ValidateOnStart();
 
         services
             .AddOptions<ObjectStorageOptions>()
@@ -86,17 +111,20 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Database
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        var dbConnectionString = configuration.GetConnectionString("MySql")
+            ?? throw new InvalidOperationException("Connection string of 'MySql' not found.");
+
 
         services.AddSingleton<AuditSaveChangesInterceptor>();
+
+        var serverVersion = ServerVersion.AutoDetect(dbConnectionString);
 
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
             var interceptor = sp.GetRequiredService<AuditSaveChangesInterceptor>();
 
             options
-                .UseMySql(connectionString, new MySqlServerVersion(new Version(configuration["Database:ServerVersion"] ?? "8.0.36")))
+                .UseMySql(dbConnectionString, new MySqlServerVersion(serverVersion))
                 .AddInterceptors(interceptor);
         });
 
@@ -110,37 +138,41 @@ public static class DependencyInjection
         services.AddSingleton<IAuditLogBackgroundQueue, AuditLogBackgroundQueue>();
         services.AddHostedService<AuditLogBackgroundService>();
 
+        var cacheConnectionString = configuration.GetConnectionString("Redis")
+            ?? throw new InvalidOperationException("Connection string of 'Redis' not found.");
+
         // Cache service
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
-            var redisOptions = sp
-                .GetRequiredService<IOptions<RedisOptions>>()
-                .Value;
-
-            var options = ConfigurationOptions.Parse(redisOptions.ConnectionString);
-
+            var options = ConfigurationOptions.Parse(cacheConnectionString);
             options.AbortOnConnectFail = false;
-
             return ConnectionMultiplexer.Connect(options);
         });
 
         services.AddSingleton<ICacheService, RedisService>();
 
-        services.AddDataProtection().SetApplicationName("RRMS");
-        services.AddOptions<KeyManagementOptions>()
-            .Configure<IConnectionMultiplexer>((options, redis) =>
-                options.XmlRepository = new RedisXmlRepository(() => redis.GetDatabase(), "rrms:auth:data-protection-keys"));
+        // Email
+        services.AddSingleton<IEmailQueueService, EmailQueueService>();
+        services.AddSingleton<IEmailSenderService, SmtpEmailSender>();
+        services.AddHostedService<SmtpEmailBackgroundService>();
 
+        // Authentication
         services.AddSingleton<IPasswordService, Argon2PasswordService>();
         services.AddSingleton<IAuthenticationEmailService, AuthenticationEmailService>();
         services.AddScoped<IAuthenticationDataService, AuthenticationDataService>();
+        services.AddScoped<IGoogleIdentityCommandService, GoogleIdentityCommandService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddSingleton<ITokenService, TokenService>();
+        services.AddScoped<IRegistrationService, RegistrationService>();
+        services.AddScoped<ISessionManagementService, SessionManagementService>();
+        services.AddScoped<AuthenticationSessionService>();
+        services.AddScoped<AuthenticationEventLogger>();
+        services.AddScoped<GoogleAuthenticationService>();
         services.AddSingleton<IAuthenticationChallengeStore, AuthenticationChallengeStore>();
 
         // Context
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+        services.AddSingleton<ICurrentRequestContext, CurrentRequestContext>();
 
         // Object storage
         services.AddSingleton<IAmazonS3>(sp =>
@@ -161,6 +193,9 @@ public static class DependencyInjection
         services.AddScoped<IProvinceRepository, ProvinceRepository>();
         services.AddScoped<IWardRepository, WardRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserCredentialRepository, UserCredentialRepository>();
+        services.AddScoped<IUserIdentityRepository, UserIdentityRepository>();
+        services.AddScoped<IUserProfileRepository, UserProfileRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();

@@ -14,6 +14,7 @@ public class RustFsObjectStorageServiceTests
     [Fact]
     public async Task UploadAsync_ShouldRequireAnUnusedObjectKey_WhenUploading()
     {
+        // Arrange
         var client = new Mock<IAmazonS3>();
         PutObjectRequest? actual = null;
         client.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
@@ -26,8 +27,10 @@ public class RustFsObjectStorageServiceTests
         }));
         using var content = new MemoryStream();
 
+        // Act
         await service.UploadAsync("key", content, "text/plain");
 
+        // Assert
         actual.Should().NotBeNull();
         actual!.IfNoneMatch.Should().Be("*");
         actual.Key.Should().Be("key");

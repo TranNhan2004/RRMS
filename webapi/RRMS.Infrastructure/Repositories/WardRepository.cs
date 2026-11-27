@@ -13,7 +13,13 @@ public class WardRepository : GenericRepository<Ward>, IWardRepository
 
     public Task<FilterResult<GetFilteredWardResponseItemModel>> FindFilteredWardsAsync(GetFilteredWardsRequestModel request, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Set<Ward>().Where(x => x.ProvinceId == request.ProvinceId).Select(x => new GetFilteredWardResponseItemModel { Id = x.Id, WardCode = x.WardCode, Name = x.Name, ProvinceId = x.ProvinceId });
+        var query = _dbContext.Set<Ward>().Where(x => x.ProvinceId == request.ProvinceId).Select(x => new GetFilteredWardResponseItemModel
+        {
+            Id = x.Id,
+            WardCode = x.WardCode,
+            Name = x.Name,
+            ProvinceId = x.ProvinceId
+        });
         return query.ToFilterResultAsync(request, cancellationToken);
     }
 }

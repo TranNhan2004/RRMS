@@ -12,6 +12,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
     }
 
+    public Task<User?> FindByIdAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        _dbContext.Set<User>().AsNoTracking().SingleOrDefaultAsync(user => user.Id == userId, cancellationToken);
+
+    public Task<bool> FindEmailExistsAsync(string email, CancellationToken cancellationToken = default) =>
+        _dbContext.Set<User>().IgnoreQueryFilters().AnyAsync(user => user.Email.ToLower() == email, cancellationToken);
+
     public Task<GetCurrentUserResponseModel?> FindCurrentUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var query = from user in _dbContext.Set<User>().AsNoTracking()

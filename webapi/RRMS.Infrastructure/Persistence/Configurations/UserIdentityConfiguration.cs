@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RRMS.Domain.Entities;
-using RRMS.Domain.Enums.Uam;
 
 namespace RRMS.Infrastructure.Persistence.Configurations;
 
@@ -13,9 +12,7 @@ public class UserIdentityConfiguration : IEntityTypeConfiguration<UserIdentity>
 
         builder.Property(x => x.Provider)
             .HasColumnName("provider")
-            .HasConversion(
-                value => value.ToString().ToUpperInvariant(),
-                value => Enum.Parse<UserIdentityProvider>(value, true))
+            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(x => x.ProviderSubject)

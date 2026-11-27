@@ -32,9 +32,12 @@ public class FileStorageController : ControllerBase
     {
         var model = GetFileUrlRequest.ToModel(request);
         var url = await _fileStorageQueryService.GetPresignedViewUrlAsync(model, cancellationToken);
-        var result = new GetFileUrlResponseModel { Url = url };
-        var dto = GetFileUrlResponse.FromModel(result);
-        return Ok(dto);
+        var result = new GetFileUrlResponseModel
+        {
+            Url = url
+        };
+        var dtoResponse = GetFileUrlResponse.FromModel(result);
+        return Ok(dtoResponse);
     }
 
     [HttpPost("download")]
@@ -49,8 +52,11 @@ public class FileStorageController : ControllerBase
     {
         var model = GetFileUrlRequest.ToModel(request);
         var url = await _fileStorageQueryService.GetPresignedDownloadUrlAsync(model, cancellationToken);
-        var result = new GetFileUrlResponseModel { Url = url };
-        var dto = GetFileUrlResponse.FromModel(result);
-        return Ok(dto);
+        var result = new GetFileUrlResponseModel
+        {
+            Url = url
+        };
+        var dtoResponse = GetFileUrlResponse.FromModel(result);
+        return Ok(dtoResponse);
     }
 }

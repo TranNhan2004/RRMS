@@ -11,23 +11,37 @@ public class AddressFilterRequestTests
     [Fact]
     public void ToModel_ShouldRejectUnknownFields_WhenFieldIsNotAllowlisted()
     {
+        // Arrange
         var request = new GetFilteredProvincesRequest
         {
-            FilterCriteria = [new FilterCriterionRequest { FieldName = "secret", Operator = "Equals", Values = ["x"] }]
+            FilterCriteria = [new FilterCriterionRequest
+            {
+                FieldName = "secret",
+                Operator = "Equals",
+                Values = ["x"]
+            }]
         };
 
+        // Act
         var action = () => GetFilteredProvincesRequest.ToModel(request);
 
+        // Assert
         action.Should().Throw<UnprocessableEntityException>();
     }
 
     [Fact]
     public void ToModel_ShouldRejectTimeZone_WhenTimeZoneIsUnknown()
     {
-        var request = new GetFilteredProvincesRequest { TimeZoneId = "invalid/timezone" };
+        // Arrange
+        var request = new GetFilteredProvincesRequest
+        {
+            TimeZoneId = "invalid/timezone"
+        };
 
+        // Act
         var action = () => GetFilteredProvincesRequest.ToModel(request);
 
+        // Assert
         action.Should().Throw<UnprocessableEntityException>();
     }
 }

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RRMS.Domain.Entities;
-using RRMS.Domain.Enums.Users;
 
 namespace RRMS.Infrastructure.Persistence.Configurations;
 
@@ -21,9 +20,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.Status)
             .HasColumnName("status")
-            .HasConversion(
-                value => value.ToString().ToUpperInvariant(),
-                value => Enum.Parse<UserStatus>(value, true))
+            .HasConversion<string>()
             .HasMaxLength(50);
 
         builder.Property(x => x.IsEmailVerified)

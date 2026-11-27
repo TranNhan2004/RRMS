@@ -9,12 +9,12 @@ namespace RRMS.Infrastructure.Services.ExportJobs;
 public sealed class ExportQueueService : IExportQueueService
 {
     private readonly Channel<ExportJobModel> _queue;
-    private readonly IOptions<ExportOptions> _exportOptions;
+    private readonly ExportOptions _exportOptions;
 
     public ExportQueueService(IOptions<ExportOptions> exportOptions)
     {
-        _exportOptions = exportOptions;
-        _queue = Channel.CreateBounded<ExportJobModel>(new BoundedChannelOptions(_exportOptions.Value.MaxQueueItems)
+        _exportOptions = exportOptions.Value;
+        _queue = Channel.CreateBounded<ExportJobModel>(new BoundedChannelOptions(_exportOptions.MaxQueueItems)
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true,

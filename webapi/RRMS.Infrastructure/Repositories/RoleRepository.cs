@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RRMS.Application.Interfaces.Repositories;
 using RRMS.Domain.Entities;
 using RRMS.Infrastructure.Persistence;
@@ -10,4 +11,7 @@ public class RoleRepository : GenericRepository<Role>, IRoleRepository
         : base(logger, appDbContext)
     {
     }
+
+    public Task<Role?> FindByCodeAsync(string code, CancellationToken cancellationToken = default) =>
+        _dbContext.Set<Role>().AsNoTracking().SingleOrDefaultAsync(role => role.Code == code, cancellationToken);
 }

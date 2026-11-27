@@ -1,12 +1,16 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.WebUtilities;
 using RRMS.Application.Interfaces.Services.Authentication;
 using StackExchange.Redis;
 
 namespace RRMS.Infrastructure.Services.Authentication;
 
+/// <summary>
+/// Stores short-lived authentication challenges and rate-limit counters in Redis.
+/// It consumes or exchanges challenges atomically so they cannot be reused.
+/// </summary>
 public sealed class AuthenticationChallengeStore : IAuthenticationChallengeStore
 {
     private const string ExchangeScript = "local value = redis.call('GET', KEYS[1]); if not value then return nil end; if not redis.call('SET', KEYS[2], value, 'PX', ARGV[1], 'NX') then return nil end; redis.call('DEL', KEYS[1]); return value";
@@ -29,21 +33,43 @@ public sealed class AuthenticationChallengeStore : IAuthenticationChallengeStore
 
     public async Task<string?> FindAsync(string purpose, string? token, CancellationToken cancellationToken = default)
     {
-        if (!ValidToken(token)) return null;
+        if (!ValidToken(token))
+        {
+            return null;
+        }
+
         var value = await _database.StringGetAsync(Key(purpose, token!)).WaitAsync(cancellationToken);
         return value.IsNull ? null : value.ToString();
     }
 
+    public async Task<TimeSpan?> FindRemainingLifetimeAsync(string purpose, string? token, CancellationToken cancellationToken = default)
+    {
+        if (!ValidToken(token))
+        {
+            return null;
+        }
+
+        return await _database.KeyTimeToLiveAsync(Key(purpose, token!)).WaitAsync(cancellationToken);
+    }
+
     public async Task<string?> ConsumeAsync(string purpose, string? token, CancellationToken cancellationToken = default)
     {
-        if (!ValidToken(token)) return null;
+        if (!ValidToken(token))
+        {
+            return null;
+        }
+
         var value = await _database.StringGetDeleteAsync(Key(purpose, token!)).WaitAsync(cancellationToken);
         return value.IsNull ? null : value.ToString();
     }
 
     public async Task<string?> ExchangeAsync(string fromPurpose, string? token, string toPurpose, TimeSpan lifetime, CancellationToken cancellationToken = default)
     {
-        if (!ValidToken(token)) return null;
+        if (!ValidToken(token))
+        {
+            return null;
+        }
+
         ValidateLifetime(lifetime);
         var next = NewToken();
         var result = await _database.ScriptEvaluateAsync(ExchangeScript,
@@ -53,21 +79,32 @@ public sealed class AuthenticationChallengeStore : IAuthenticationChallengeStore
 
     public async Task<bool> AllowAsync(string scope, string identifier, long limit, TimeSpan window, CancellationToken cancellationToken = default)
     {
-        if (limit < 1 || string.IsNullOrWhiteSpace(identifier)) throw new ArgumentException("Invalid rate limit.");
+        if (limit < 1 || string.IsNullOrWhiteSpace(identifier))
+        {
+            throw new ArgumentException("Invalid rate limit.");
+        }
+
         ValidateLifetime(window);
         var result = await _database.ScriptEvaluateAsync(RateLimitScript,
             [$"rrms:auth:limit:{Purpose(scope)}:{Digest(identifier)}"], [(long)window.TotalMilliseconds]).WaitAsync(cancellationToken);
-        if (result.IsNull) throw new InvalidOperationException("Unable to apply authentication rate limit.");
+        if (result.IsNull)
+        {
+            throw new InvalidOperationException("Unable to apply authentication rate limit.");
+        }
+
         return (long)result <= limit;
     }
 
-    private static string NewToken() => Base64UrlEncoder.Encode(RandomNumberGenerator.GetBytes(32));
+    private static string NewToken() => WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
     private static bool ValidToken(string? token) => token != null && Regex.IsMatch(token, "^[A-Za-z0-9_-]{43}$", RegexOptions.CultureInvariant);
     private static string Key(string purpose, string token) => $"rrms:auth:challenge:{Purpose(purpose)}:{Digest(token)}";
-    private static string Digest(string value) => Base64UrlEncoder.Encode(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    private static string Digest(string value) => WebEncoders.Base64UrlEncode(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
     private static string Purpose(string purpose) => purpose != null && Regex.IsMatch(purpose, "^[a-z-]{1,40}$", RegexOptions.CultureInvariant) ? purpose : throw new ArgumentException("Invalid challenge purpose.");
     private static void ValidateLifetime(TimeSpan lifetime)
     {
-        if (lifetime.TotalMilliseconds < 1 || lifetime.TotalMilliseconds > long.MaxValue) throw new ArgumentOutOfRangeException(nameof(lifetime));
+        if (lifetime.TotalMilliseconds < 1 || lifetime.TotalMilliseconds > long.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(nameof(lifetime));
+        }
     }
 }

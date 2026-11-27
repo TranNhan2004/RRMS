@@ -5,5 +5,7 @@ namespace RRMS.Application.Interfaces.Repositories;
 
 public interface IUserRepository : IGenericRepository<User>
 {
+    Task<User?> FindByIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<bool> FindEmailExistsAsync(string email, CancellationToken cancellationToken = default);
     Task<GetCurrentUserResponseModel?> FindCurrentUserAsync(Guid userId, CancellationToken cancellationToken = default);
 }

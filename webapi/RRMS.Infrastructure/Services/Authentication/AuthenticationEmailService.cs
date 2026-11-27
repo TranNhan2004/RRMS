@@ -1,46 +1,38 @@
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using MimeKit;
+using RRMS.Application.Interfaces.Services.Email;
+using System.Text.Encodings.Web;
 using RRMS.Application.Interfaces.Services.Authentication;
-using RRMS.Infrastructure.Options;
+using RRMS.Application.Models.Email;
+using RRMS.Infrastructure.Services.Email;
 
 namespace RRMS.Infrastructure.Services.Authentication;
 
+/// <summary>
+/// Builds and queues the verification email sent during registration.
+/// </summary>
 public class AuthenticationEmailService : IAuthenticationEmailService
 {
-    private readonly SmtpOptions _options;
-    private readonly IHostEnvironment _environment;
+    private readonly IEmailQueueService _queue;
 
-    public AuthenticationEmailService(IOptions<AuthOptions> options, IHostEnvironment environment)
+    public AuthenticationEmailService(IEmailQueueService queue)
     {
-        _options = options.Value.Credentials.Smtp;
-        _environment = environment;
+        _queue = queue;
     }
 
-    public void ValidateConfiguration()
+    public Task SendVerificationAsync(string recipient, string verificationLink, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(_options.Host) || _options.Port is < 1 or > 65535 ||
-            !MailboxAddress.TryParse(_options.From, out _) ||
-            (_options.UseAuthentication && (string.IsNullOrWhiteSpace(_options.UserName) || string.IsNullOrEmpty(_options.Password))) ||
-            (!_options.RequireStartTls && !_environment.IsEnvironment("Local")))
-            throw new InvalidOperationException("Invalid authentication email configuration.");
-    }
+        cancellationToken.ThrowIfCancellationRequested();
+        var encodedLink = HtmlEncoder.Default.Encode(verificationLink);
+        var email = new EmailMessageModel
+        {
+            Recipient = recipient,
+            Subject = "Verify your email",
+            HtmlBody = $"<p>Open this link to verify your email:</p><p><a href=\"{encodedLink}\">Verify your email</a></p>"
+        };
+        if (!_queue.TryEnqueue(email))
+        {
+            throw new InvalidOperationException("Email queue is full.");
+        }
 
-    public async Task SendVerificationAsync(string recipient, string verificationLink, CancellationToken cancellationToken = default)
-    {
-        ValidateConfiguration();
-        var message = new MimeMessage();
-        message.From.Add(MailboxAddress.Parse(_options.From));
-        message.To.Add(MailboxAddress.Parse(recipient));
-        message.Subject = "Verify your email";
-        message.Body = new TextPart("plain") { Text = "Open this link to verify your email: " + verificationLink };
-        using var client = new SmtpClient { Timeout = 10000 };
-        await client.ConnectAsync(_options.Host, _options.Port,
-            _options.RequireStartTls ? SecureSocketOptions.StartTls : SecureSocketOptions.None, cancellationToken);
-        if (_options.UseAuthentication) await client.AuthenticateAsync(_options.UserName, _options.Password, cancellationToken);
-        await client.SendAsync(message, cancellationToken);
-        await client.DisconnectAsync(true, cancellationToken);
+        return Task.CompletedTask;
     }
 }

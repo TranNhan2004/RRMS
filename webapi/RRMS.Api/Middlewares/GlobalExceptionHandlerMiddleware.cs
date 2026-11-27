@@ -1,4 +1,5 @@
 using System.Text.Json;
+using StackExchange.Redis;
 using RRMS.Api.Dtos.Common;
 using RRMS.Domain.Exceptions;
 using RRMS.Domain.Utils;
@@ -9,11 +10,16 @@ public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly Serilog.ILogger _logger;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public GlobalExceptionHandlerMiddleware(RequestDelegate next, Serilog.ILogger logger)
+    public GlobalExceptionHandlerMiddleware(
+        RequestDelegate next,
+        Serilog.ILogger logger,
+        IHostEnvironment hostEnvironment)
     {
         _next = next;
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -52,10 +58,18 @@ public class GlobalExceptionHandlerMiddleware
         }
     }
 
-    private static (int StatusCode, ErrorResponse Response) CreateResponse(Exception exception)
+    private (int StatusCode, ErrorResponse Response) CreateResponse(Exception exception)
     {
         return exception switch
         {
+            RedisException => (StatusCodes.Status503ServiceUnavailable, new ErrorResponse
+            {
+                Message = "Authentication service is temporarily unavailable."
+            }),
+            RateLimitException rateLimit => (StatusCodes.Status429TooManyRequests, new ErrorResponse
+            {
+                Message = rateLimit.Message
+            }),
             UnauthorizedException unauthorized =>
                 (StatusCodes.Status401Unauthorized,
                 new ErrorResponse
@@ -96,11 +110,11 @@ public class GlobalExceptionHandlerMiddleware
                     Details = unprocessable.Details
                 }),
 
-            _ =>
+            Exception ex =>
                 (StatusCodes.Status500InternalServerError,
                 new ErrorResponse
                 {
-                    Message = "Something went wrong."
+                    Message = !_hostEnvironment.IsProduction() ? ex.Message : "Something went wrong.",
                 })
         };
     }

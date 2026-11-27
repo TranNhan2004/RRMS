@@ -44,8 +44,12 @@ public sealed class ExportBackgroundService : BackgroundService
     internal async Task ProcessAsync(ExportJobModel job, CancellationToken cancellationToken)
     {
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
-        var handlers = scope.ServiceProvider.GetServices<IExportJobHandler>()
-            .Where(handler => handler.CanHandle(job)).Take(2).ToList();
+        var handlers = scope.ServiceProvider
+            .GetServices<IExportJobHandler>()
+            .Where(handler => handler.CanHandle(job))
+            .Take(2)
+            .ToList();
+
         if (handlers.Count != 1)
         {
             throw new UnprocessableEntityException("An export job must have exactly one matching handler.");

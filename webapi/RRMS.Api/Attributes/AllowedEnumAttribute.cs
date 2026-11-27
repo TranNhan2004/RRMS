@@ -20,9 +20,7 @@ public sealed class AllowedEnumValuesAttribute : ValidationAttribute
         _enumType = enumType;
     }
 
-    protected override ValidationResult? IsValid(
-        object? value,
-        ValidationContext validationContext)
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value is null || value is string { Length: 0 })
         {
@@ -31,8 +29,7 @@ public sealed class AllowedEnumValuesAttribute : ValidationAttribute
 
         if (value is not string input)
         {
-            return new ValidationResult(
-                FormatErrorMessage(validationContext.DisplayName));
+            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
         }
 
         var allowedValues = Enum.GetValues(_enumType)
@@ -44,8 +41,7 @@ public sealed class AllowedEnumValuesAttribute : ValidationAttribute
             return ValidationResult.Success;
         }
 
-        return new ValidationResult(
-            FormatErrorMessage(validationContext.DisplayName));
+        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
     }
 
     public override string FormatErrorMessage(string name)

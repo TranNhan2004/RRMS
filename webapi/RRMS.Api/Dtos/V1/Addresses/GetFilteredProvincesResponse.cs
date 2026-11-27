@@ -8,9 +8,20 @@ public class GetFilteredProvincesResponse : FilterResponse<GetFilteredProvinceRe
 {
     public static GetFilteredProvincesResponse FromModel(FilterResult<GetFilteredProvinceResponseItemModel> result) => new()
     {
-        Items = [.. result.Items.Select(item => new GetFilteredProvinceResponseItem { Id = item.Id, ProvinceCode = item.ProvinceCode, Name = item.Name, ShortName = item.ShortName, Code = item.Code, PlaceType = item.PlaceType, Country = item.Country })],
-        CurrentPage = result.CurrentPage, ItemsPerPage = result.ItemsPerPage,
-        TotalItems = result.TotalItems, TotalPages = result.TotalPages
+        Items = [.. result.Items.Select(item => new GetFilteredProvinceResponseItem
+        {
+            Id = item.Id,
+            ProvinceCode = item.ProvinceCode,
+            Name = item.Name,
+            ShortName = item.ShortName,
+            Code = item.Code,
+            PlaceType = item.PlaceType,
+            Country = item.Country
+        })],
+        CurrentPage = result.CurrentPage,
+        ItemsPerPage = result.ItemsPerPage,
+        TotalItems = result.TotalItems,
+        TotalPages = result.TotalPages
     };
 }
 

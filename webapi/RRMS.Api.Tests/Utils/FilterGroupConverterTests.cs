@@ -11,8 +11,14 @@ public class FilterGroupConverterTests
     [Fact]
     public void Build_ShouldAppendMissingCriteria_WhenPatternOmitsCriterion()
     {
-        var result = FilterGroupConverter.Build("{0} OR (NOT {1})", 3);
+        // Arrange
+        const string pattern = "{0} OR (NOT {1})";
+        const int criterionCount = 3;
 
+        // Act
+        var result = FilterGroupConverter.Build(pattern, criterionCount);
+
+        // Assert
         result.Should().NotBeNull();
         result!.Logic.Should().Be(FilterGroupLogic.And);
         result.Children.Should().HaveCount(2);
@@ -26,8 +32,13 @@ public class FilterGroupConverterTests
     [InlineData("({0}")]
     public void Build_ShouldRejectInvalidPattern_WhenPatternIsInvalid(string pattern)
     {
-        var action = () => FilterGroupConverter.Build(pattern, 3);
+        // Arrange
+        const int criterionCount = 3;
 
+        // Act
+        var action = () => FilterGroupConverter.Build(pattern, criterionCount);
+
+        // Assert
         action.Should().Throw<UnprocessableEntityException>();
     }
 }

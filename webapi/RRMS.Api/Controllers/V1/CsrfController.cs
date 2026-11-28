@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RRMS.Infrastructure.Services.Csrf;
 
 namespace RRMS.Api.Controllers.V1;
 
-[ApiController]
-[ApiVersion("1.0")]
-[AllowAnonymous]
+[EnableRateLimiting(RateLimiterPolicies.Standard)]
 [Route("api/v{version:apiVersion}/csrf")]
+[ApiVersion("1.0")]
+[ApiController]
+[AllowAnonymous]
 public sealed class CsrfController : ControllerBase
 {
     private readonly CsrfService _csrfService;

@@ -1,4 +1,4 @@
-BEGIN;
+START TRANSACTION;
 INSERT INTO `wards` (`id`, `ward_code`, `name`, `province_id`) VALUES ('01a2028f-7a0b-7cde-89b6-2c6f8548b5a9', '00004', 'Phường Ba Đình', '01a2028f-7a08-74cf-8fb1-e97bf35bcbf1');
 INSERT INTO `wards` (`id`, `ward_code`, `name`, `province_id`) VALUES ('01a2028f-7a0b-7dcc-ab5c-b04e1d59a376', '00008', 'Phường Ngọc Hà', '01a2028f-7a08-74cf-8fb1-e97bf35bcbf1');
 INSERT INTO `wards` (`id`, `ward_code`, `name`, `province_id`) VALUES ('01a2028f-7a0b-73b8-b0d0-5121270477bd', '00025', 'Phường Giảng Võ', '01a2028f-7a08-74cf-8fb1-e97bf35bcbf1');

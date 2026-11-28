@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RRMS.Api.Dtos.Common;
@@ -7,6 +9,7 @@ using RRMS.Application.Models.FileStorages;
 
 namespace RRMS.Api.Controllers.V1;
 
+[EnableRateLimiting(RateLimiterPolicies.Standard)]
 [Route("api/v{version:apiVersion}/file-storages")]
 [ApiVersion("1.0")]
 [ApiController]

@@ -12,7 +12,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.UserName)
             .HasColumnName("user_name")
-            .HasMaxLength(64);
+            .HasMaxLength(64)
+            .IsConcurrencyToken();
 
         builder.Property(x => x.Email)
             .HasColumnName("email")

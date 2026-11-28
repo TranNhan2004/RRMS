@@ -12,6 +12,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddScoped<RRMS.Application.Interfaces.Services.Addresses.IAddressQueryService, RRMS.Application.Services.Addresses.AddressQueryService>();
+        services.AddScoped<RRMS.Application.Interfaces.Services.Users.IUserCommandService, RRMS.Application.Services.Users.UserCommandService>();
         services.AddScoped<RRMS.Application.Interfaces.Services.Users.IUserQueryService, RRMS.Application.Services.Users.UserQueryService>();
 
         services.AddScoped<IFileStorageCommandService, FileStorageCommandService>();

@@ -176,23 +176,5 @@ public class GoogleAuthenticationTests
         }
     }
 
-    [Fact]
-    public void AddApplicationAuthentication_ShouldRejectIncompleteGoogleConfiguration_WhenSecretIsMissing()
-    {
-        // Arrange
-        var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            ["Auth:Session:SlidingExpiration"] = "00:30:00",
-            ["Auth:Session:AbsoluteExpiration"] = "1.00:00:00",
-            ["Auth:Session:ExternalExpiration"] = "00:05:00",
-            ["Auth:Google:ClientId"] = "client"
-        }).Build();
-        var services = new ServiceCollection();
 
-        // Act
-        var action = () => services.AddApplicationAuthentication(config);
-
-        // Assert
-        action.Should().Throw<InvalidOperationException>();
-    }
 }

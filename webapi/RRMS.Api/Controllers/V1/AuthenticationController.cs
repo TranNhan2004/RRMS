@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using RRMS.Domain.Constants.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ using IAuthenticationService = RRMS.Application.Interfaces.Services.Authenticati
 
 namespace RRMS.Api.Controllers.V1;
 
+[EnableRateLimiting(RateLimiterPolicies.Auth)]
 [Route("api/v{version:apiVersion}/auth")]
 [ApiVersion("1.0")]
 [ApiController]

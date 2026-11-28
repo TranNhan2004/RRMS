@@ -1,7 +1,12 @@
 using System.Security.Claims;
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Moq;
+using RRMS.Application.Interfaces.Repositories;
 using RRMS.Domain.Exceptions;
+using RRMS.Domain.Entities;
 using RRMS.Infrastructure.Contexts;
 using Xunit;
 
@@ -16,7 +21,7 @@ public class CurrentUserContextTests
         var id = Guid.NewGuid();
         var httpContext = new DefaultHttpContext();
         httpContext.User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", id.ToString())], "Bearer"));
-        var currentUser = new CurrentUserContext(new HttpContextAccessor
+        var currentUser = CreateContext(new HttpContextAccessor
         {
             HttpContext = httpContext
         });
@@ -33,7 +38,7 @@ public class CurrentUserContextTests
     {
         // Arrange
         var context = new DefaultHttpContext();
-        var currentUser = new CurrentUserContext(new HttpContextAccessor
+        var currentUser = CreateContext(new HttpContextAccessor
         {
             HttpContext = context
         });
@@ -57,7 +62,7 @@ public class CurrentUserContextTests
         // Arrange
         var context = new DefaultHttpContext();
         context.User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", subject)], "Session"));
-        var currentUser = new CurrentUserContext(new HttpContextAccessor
+        var currentUser = CreateContext(new HttpContextAccessor
         {
             HttpContext = context
         });
@@ -75,7 +80,7 @@ public class CurrentUserContextTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", Guid.NewGuid().ToString())]));
-        var currentUser = new CurrentUserContext(new HttpContextAccessor
+        var currentUser = CreateContext(new HttpContextAccessor
         {
             HttpContext = httpContext
         });
@@ -87,5 +92,118 @@ public class CurrentUserContextTests
         // Assert
         userId.Should().BeNull();
         action.Should().Throw<UnauthorizedException>();
+    }
+    [Fact]
+    public void GetRequiredUserId_ShouldReturnConfiguredUser_WhenEnvironmentIsDevelopment()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var userRepository = new Mock<IUserRepository>();
+        var candidates = new[]
+        {
+            new User { Id = Guid.NewGuid(), Email = "other@example.org" },
+            new User { Id = id, Email = "USER@example.org" }
+        }.AsQueryable();
+        userRepository.Setup(repository => repository.FindFirstByConditionAsync(
+                It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Func<IQueryable<User>, IQueryable<User>> filter, bool _, CancellationToken _) => filter(candidates).FirstOrDefault());
+        var currentUser = CreateContext(new HttpContextAccessor(), "Development", " User@Example.org ", userRepository);
+
+        // Act
+        var result = currentUser.GetRequiredUserId();
+
+        // Assert
+        result.Should().Be(id);
+        userRepository.Verify(repository => repository.FindFirstByConditionAsync(
+            It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), false, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public void GetRequiredUserId_ShouldRejectRequest_WhenDevelopmentBypassUserDoesNotExist()
+    {
+        // Arrange
+        var userRepository = new Mock<IUserRepository>();
+        userRepository.Setup(repository => repository.FindFirstByConditionAsync(
+                It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((User?)null);
+        var currentUser = CreateContext(new HttpContextAccessor(), "Development", "missing@example.org", userRepository);
+
+        // Act
+        var action = () => currentUser.GetRequiredUserId();
+
+        // Assert
+        action.Should().Throw<UnauthorizedException>();
+    }
+
+    [Theory]
+    [InlineData("Production")]
+    [InlineData("Dev")]
+    [InlineData("Test")]
+    public void GetRequiredUserId_ShouldUseAuthenticatedUser_WhenEnvironmentIsNotDevelopment(string environment)
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var context = new DefaultHttpContext();
+        context.User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", id.ToString())], "Session"));
+        var userRepository = new Mock<IUserRepository>();
+        var currentUser = CreateContext(new HttpContextAccessor { HttpContext = context }, environment, "user@example.org", userRepository);
+
+        // Act
+        var result = currentUser.GetRequiredUserId();
+
+        // Assert
+        result.Should().Be(id);
+        userRepository.Verify(repository => repository.FindFirstByConditionAsync(
+            It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public void GetRequiredUserId_ShouldRejectRequest_WhenDevelopmentBypassUserHasEmptyId()
+    {
+        // Arrange
+        var userRepository = new Mock<IUserRepository>();
+        userRepository.Setup(repository => repository.FindFirstByConditionAsync(
+                It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new User { Id = Guid.Empty, Email = "user@example.org" });
+        var currentUser = CreateContext(new HttpContextAccessor(), "Development", "user@example.org", userRepository);
+
+        // Act
+        var action = () => currentUser.GetRequiredUserId();
+
+        // Assert
+        action.Should().Throw<UnauthorizedException>();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void GetRequiredUserId_ShouldUseAuthenticatedUser_WhenDevelopmentBypassEmailIsMissing(string? email)
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var context = new DefaultHttpContext();
+        context.User = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", id.ToString())], "Session"));
+        var userRepository = new Mock<IUserRepository>();
+        var currentUser = CreateContext(new HttpContextAccessor { HttpContext = context }, "Development", email, userRepository);
+
+        // Act
+        var result = currentUser.GetRequiredUserId();
+
+        // Assert
+        result.Should().Be(id);
+        userRepository.Verify(repository => repository.FindFirstByConditionAsync(
+            It.IsAny<Func<IQueryable<User>, IQueryable<User>>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    private static CurrentUserContext CreateContext(IHttpContextAccessor accessor, string environment = "Production", string? email = null, Mock<IUserRepository>? userRepository = null)
+    {
+        var host = new Mock<IHostEnvironment>();
+        host.SetupGet(value => value.EnvironmentName).Returns(environment);
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["LocalBypassUserEmail"] = email
+        }).Build();
+        return new CurrentUserContext(accessor, host.Object, configuration, (userRepository ?? new Mock<IUserRepository>()).Object);
     }
 }

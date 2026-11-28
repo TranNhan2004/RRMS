@@ -5,3 +5,7 @@
 
 gen-password.js
 note.txt
+admin-cre.txt
+
+# Local SQL generator credentials
+/webapi/RRMS.Api/user.txt

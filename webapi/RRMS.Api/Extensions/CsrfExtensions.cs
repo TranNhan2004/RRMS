@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Builder;
+using RRMS.Api.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,5 +26,14 @@ public static class CsrfExtensions
         });
         services.AddScoped<CsrfService>();
         return services;
+    }
+    public static IApplicationBuilder UseApplicationCsrf(this IApplicationBuilder app, IHostEnvironment environment)
+    {
+        if (!environment.IsDevelopment())
+        {
+            app.UseMiddleware<CsrfMiddleware>();
+        }
+
+        return app;
     }
 }

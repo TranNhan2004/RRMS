@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RRMS.Api.Dtos.V1.Authentication;
@@ -6,9 +8,10 @@ using RRMS.Infrastructure.Services.Authentication;
 
 namespace RRMS.Api.Controllers.V1;
 
-[ApiController]
-[ApiVersion("1.0")]
+[EnableRateLimiting(RateLimiterPolicies.Auth)]
 [Route("api/v{version:apiVersion}/auth/google")]
+[ApiVersion("1.0")]
+[ApiController]
 public class GoogleAuthenticationController : ControllerBase
 {
     private readonly GoogleAuthenticationService _googleAuthenticationService;

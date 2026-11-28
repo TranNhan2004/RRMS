@@ -1,0 +1,416 @@
+2026-11-28 15:26:00.202 +07:00 [INF] Executed DbCommand (39ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 15:26:00.202 +07:00 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 15:26:00.206 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 15:26:00.206 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 15:26:00.206 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 15:26:00.513 +07:00 [WRN] No XML encryptor configured. Key {d6ef17a5-e903-4207-8ab8-e45b5a3e873d} may be persisted to storage in unencrypted form.
+2026-11-28 15:26:00.579 +07:00 [INF] Now listening on: http://localhost:5000
+2026-11-28 15:26:00.581 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-28 15:26:00.581 +07:00 [INF] Hosting environment: Development
+2026-11-28 15:26:00.581 +07:00 [INF] Content root path: /home/nhan/Workspace/room-rental-system/webapi/RRMS.Api
+2026-11-28 15:26:19.377 +07:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 188.4860 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:37.405 +07:00 [INF] HTTP GET /api/health-check responded 200 in 55.7486 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:38.335 +07:00 [INF] HTTP GET /api/health-check responded 200 in 5.4726 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:39.051 +07:00 [INF] HTTP GET /api/health-check responded 200 in 8.1957 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:39.746 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.5461 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:40.489 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.6331 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:40.956 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3983 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:41.157 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.6037 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:41.396 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4251 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:41.562 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3576 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:41.754 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4709 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:41.910 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4349 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.090 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4360 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.247 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4240 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.466 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.6079 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.601 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4525 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.793 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.4883 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:42.958 +07:00 [INF] HTTP GET /api/health-check responded 200 in 2.6629 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:43.114 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.5484 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:43.296 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3324 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:43.504 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3643 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:43.726 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3719 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:44.381 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3913 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:44.608 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3366 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:44.783 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3782 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:44.963 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.6877 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:45.157 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3701 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:45.340 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3330 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:45.539 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3593 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:45.722 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.3081 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:45.917 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.5604 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 15:26:46.089 +07:00 [INF] HTTP GET /api/health-check responded 200 in 0.5871 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 16:36:30.628 +07:00 [INF] Application is shutting down...
+eters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:35:51.542 +07:00 [INF] Executed DbCommand (60ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:35:51.620 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:35:51.620 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:35:51.620 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:35:51.982 +07:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (98): Address already in use
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-11-28 16:36:39.859 +07:00 [INF] Executed DbCommand (35ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:36:39.859 +07:00 [INF] Executed DbCommand (39ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:36:39.893 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:36:39.904 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:36:39.904 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:36:40.287 +07:00 [INF] Now listening on: http://localhost:5000
+2026-11-28 16:36:40.289 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-28 16:36:40.290 +07:00 [INF] Hosting environment: Development
+2026-11-28 16:36:40.291 +07:00 [INF] Content root path: /home/nhan/Workspace/room-rental-system/webapi/RRMS.Api
+2026-11-28 16:50:10.650 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 401 in 73.4928 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 16:55:47.037 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 401 in 6.5315 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 16:55:50.395 +07:00 [INF] Application is shutting down...
+2026-11-28 16:56:01.336 +07:00 [INF] Executed DbCommand (39ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:56:01.336 +07:00 [INF] Executed DbCommand (40ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:56:01.378 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:56:01.378 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:56:01.378 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT 1
+2026-11-28 16:56:01.677 +07:00 [INF] Now listening on: http://localhost:5000
+2026-11-28 16:56:01.679 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-11-28 16:56:01.680 +07:00 [INF] Hosting environment: Development
+2026-11-28 16:56:01.680 +07:00 [INF] Content root path: /home/nhan/Workspace/room-rental-system/webapi/RRMS.Api
+2026-11-28 16:56:06.100 +07:00 [WRN] Request failed with status code 422: [POST] /api/v1/addresses/provinces
+RRMS.Domain.Exceptions.UnprocessableEntityException: Current page must be a positive integer.
+   at RRMS.Api.Dtos.Common.PaginationRequest.set_CurrentPage(Int32 value) in /home/nhan/Workspace/room-rental-system/webapi/RRMS.Api/Dtos/Common/PaginationRequest.cs:line 17
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState& bufferState, JsonReaderState& jsonReaderState, ReadStack& readStack, T& value)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync[TReadBufferState,TStream](TStream utf8Json, TReadBufferState bufferState, CancellationToken cancellationToken)
+   at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsObjectAsync(PipeReader utf8Json, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter.ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter.ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
+   at Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinder.BindModelAsync(ModelBindingContext bindingContext)
+   at Microsoft.AspNetCore.Mvc.ModelBinding.ParameterBinder.BindModelAsync(ActionContext actionContext, IModelBinder modelBinder, IValueProvider valueProvider, ParameterDescriptor parameter, ModelMetadata metadata, Object value, Object container)
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerBinderDelegateProvider.<>c__DisplayClass0_0.<<CreateBinderDelegate>g__Bind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at RRMS.Api.Middlewares.GlobalExceptionHandlerMiddleware.InvokeAsync(HttpContext context) in /home/nhan/Workspace/room-rental-system/webapi/RRMS.Api/Middlewares/GlobalExceptionHandlerMiddleware.cs:line 29
+2026-11-28 16:56:06.128 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 422 in 146.9136 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:04:13.765 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:04:13.857 +07:00 [INF] Executed DbCommand (31ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:04:13.889 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 543.9130 ms IP=::1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:05:35.465 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:05:35.469 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:05:35.471 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 27.0060 ms IP=::1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:05:47.929 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:05:47.934 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:05:47.935 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 11.2103 ms IP=::1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:47.601 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:47.608 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:47.609 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 13.1074 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:51.595 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:51.597 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:51.598 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 5.8233 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:51.767 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:51.769 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:51.769 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 4.8054 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:51.937 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:51.938 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:51.939 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 5.4536 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:52.255 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:52.257 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:52.257 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 6.0129 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:52.450 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:52.451 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:52.452 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 4.7790 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:52.581 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:52.583 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:52.584 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 6.3549 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:52.761 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:52.764 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:52.764 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 6.0295 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:52.930 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:52.934 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:52.936 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 9.6831 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.094 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.096 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.097 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 9.9319 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.220 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.224 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.227 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 10.8999 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.425 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.429 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.429 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 9.8663 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.553 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.557 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.558 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 7.6340 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.697 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.700 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.700 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 5.3704 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:53.894 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:53.899 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:53.900 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 10.5780 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.045 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.048 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.048 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 6.1569 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.203 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.206 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.208 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 8.6224 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.357 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.360 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.362 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 8.9614 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.544 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.545 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.546 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 4.9489 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.700 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.704 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.706 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 7.4611 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:54.876 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:54.878 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:54.879 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 9.1100 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null
+2026-11-28 17:07:55.058 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+SELECT COUNT(*)
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+2026-11-28 17:07:55.063 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='60']
+SELECT `p`.`id` AS `Id`, `p`.`province_code` AS `ProvinceCode`, `p`.`name` AS `Name`, `p`.`short_name` AS `ShortName`, `p`.`code` AS `Code`, `p`.`place_type` AS `PlaceType`, `p`.`country` AS `Country`
+FROM `provinces` AS `p`
+WHERE `p`.`name` LIKE '%Hà Nội%'
+ORDER BY `p`.`name`
+LIMIT @__p_1 OFFSET @__p_0
+2026-11-28 17:07:55.064 +07:00 [INF] HTTP POST /api/v1/addresses/provinces responded 200 in 9.9471 ms IP=127.0.0.1 XFF= ClientActionId=null ClientRequestId=null

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using RRMS.Application.Interfaces.Repositories;
 using RRMS.Domain.Entities;
+using RRMS.Domain.Exceptions;
 using RRMS.Infrastructure.Persistence.Extensions;
 
 namespace RRMS.Infrastructure.Persistence;
@@ -35,6 +36,23 @@ public class AppDbContext : DbContext, IUnitOfWork
         try
         {
             return await base.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            foreach (var entry in ex.Entries.Where(entry => entry.Entity is User))
+            {
+                var userName = entry.Property(nameof(User.UserName));
+                if (userName.IsModified && userName.OriginalValue == null)
+                {
+                    var databaseValues = await entry.GetDatabaseValuesAsync(cancellationToken);
+                    if (databaseValues?.GetValue<string?>(nameof(User.UserName)) != null)
+                    {
+                        throw new UnprocessableEntityException("Username can only be set once.");
+                    }
+                }
+            }
+
+            throw new ConflictException("The data was changed by another request. Please retry.");
         }
         catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
         {

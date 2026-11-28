@@ -12,6 +12,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
     }
 
+    public Guid? FindUserIdByEmail(string email) =>
+        _dbContext.Set<User>().AsNoTracking()
+            .Where(user => !user.IsDeleted && user.Email.ToLower() == email)
+            .Select(user => (Guid?)user.Id)
+            .SingleOrDefault();
+
     public Task<User?> FindByIdAsync(Guid userId, CancellationToken cancellationToken = default) =>
         _dbContext.Set<User>().AsNoTracking().SingleOrDefaultAsync(user => user.Id == userId, cancellationToken);
 

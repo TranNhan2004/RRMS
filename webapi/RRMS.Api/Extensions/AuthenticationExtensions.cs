@@ -1,12 +1,9 @@
 using System.Security.Claims;
+using RRMS.Api.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RRMS.Infrastructure.Services.Authentication;
 using RRMS.Domain.Constants.Authentication;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.DataProtection.StackExchangeRedis;
-using StackExchange.Redis;
 using RRMS.Application.Interfaces.Services.Authentication;
 using RRMS.Infrastructure.Options;
 
@@ -19,10 +16,7 @@ public static class AuthenticationExtensions
         var auth = configuration.GetSection(AuthOptions.SectionName).Get<AuthOptions>()
             ?? throw new InvalidOperationException("Auth settings are required.");
 
-        services.AddDataProtection().SetApplicationName("RRMS");
-        services.AddOptions<KeyManagementOptions>()
-            .Configure<IConnectionMultiplexer>((options, redis) =>
-                options.XmlRepository = new RedisXmlRepository(() => redis.GetDatabase(), "rrms:auth:data-protection-keys"));
+        services.AddRedisDataProtectionKeyStorage();
         services.AddSingleton<RedisTicketStore>();
         services.AddScoped<SessionCookieService>();
         services.AddOptions<CookieAuthenticationOptions>(AuthenticationSchemes.Session)
@@ -32,6 +26,17 @@ public static class AuthenticationExtensions
             .Configure<IHostEnvironment>((options, environment) => options.Cookie.SecurePolicy = CookiePolicy.SecurePolicy(environment));
 
         var authentication = services.AddAuthentication(AuthenticationSchemes.Session);
+
+        authentication.AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>(
+            DevelopmentAuthenticationHandler.SchemeName, _ => { });
+
+        services.AddOptions<AuthenticationOptions>().Configure<IHostEnvironment>((options, environment) =>
+        {
+            if (environment.IsDevelopment())
+            {
+                options.DefaultScheme = DevelopmentAuthenticationHandler.SchemeName;
+            }
+        });
         authentication.AddCookie(AuthenticationSchemes.Session, options =>
         {
             options.Cookie.Name = auth.Session.Cookie.Name;

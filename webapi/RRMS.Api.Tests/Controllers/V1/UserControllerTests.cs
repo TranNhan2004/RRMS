@@ -27,7 +27,7 @@ public class UserControllerTests
                 FirstName = "Alice"
             }
         });
-        var controller = new UserController(service.Object);
+        var controller = new UserController(service.Object, Mock.Of<IUserCommandService>());
 
         // Act
         var result = await controller.GetCurrentUserAsync();
@@ -39,5 +39,29 @@ public class UserControllerTests
         response.Email.Should().Be("alice@example.com");
         response.Profile!.FirstName.Should().Be("Alice");
         service.Verify(x => x.GetCurrentUserAsync(CancellationToken.None), Times.Once);
+    }
+    [Fact]
+    public async Task SetUserNameAsync_ShouldReturnUpdatedUserName_WhenServiceSucceeds()
+    {
+        // Arrange
+        var commandService = new Mock<IUserCommandService>();
+        commandService.Setup(value => value.SetUserNameAsync(It.IsAny<SetUserNameRequestModel>(), CancellationToken.None))
+            .ReturnsAsync(new SetUserNameResponseModel
+            {
+                UserName = "alice"
+            });
+        var controller = new UserController(Mock.Of<IUserQueryService>(), commandService.Object);
+        var request = new SetUserNameRequest
+        {
+            UserName = "alice"
+        };
+
+        // Act
+        var result = await controller.SetUserNameAsync(request);
+
+        // Assert
+        var response = result.Should().BeOfType<OkObjectResult>().Subject.Value.Should().BeOfType<SetUserNameResponse>().Subject;
+        response.UserName.Should().Be("alice");
+        commandService.Verify(value => value.SetUserNameAsync(It.Is<SetUserNameRequestModel>(model => model.UserName == "alice"), CancellationToken.None), Times.Once);
     }
 }

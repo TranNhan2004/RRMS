@@ -258,7 +258,7 @@ public class OptionsRegistrationTests
         var environment = new Mock<IHostEnvironment>();
         environment.SetupGet(value => value.EnvironmentName).Returns(environmentName);
         services.AddSingleton(environment.Object);
-        services.AddAppOptions(configuration);
+        services.AddApplicationOptions(configuration);
         return services.BuildServiceProvider();
     }
 

@@ -33,6 +33,12 @@ services:
         "redis-server",
         "--appendonly",
         "yes",
+        "--appendfsync",
+        "everysec",
+        "--maxmemory-policy",
+        "noeviction",
+        "--maxmemory",
+        "${REDIS_MAX_MEMORY}",
         "--requirepass",
         "${REDIS_PASSWORD}",
       ]

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RRMS.Api.Dtos.V1.Authentication;
@@ -5,10 +7,11 @@ using RRMS.Application.Interfaces.Services.Authentication;
 
 namespace RRMS.Api.Controllers.V1;
 
-[ApiController]
-[ApiVersion("1.0")]
-[Authorize]
+[EnableRateLimiting(RateLimiterPolicies.Standard)]
 [Route("api/v{version:apiVersion}/auth")]
+[ApiVersion("1.0")]
+[ApiController]
+[Authorize]
 public class SessionsController : ControllerBase
 {
     private readonly ISessionManagementService _sessionManagementService;

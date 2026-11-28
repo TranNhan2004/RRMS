@@ -1,4 +1,4 @@
-BEGIN;
+START TRANSACTION;
 INSERT INTO `provinces` (`id`, `province_code`, `name`, `short_name`, `code`, `place_type`, `country`) VALUES
 ('01a2028f-7a08-74cf-8fb1-e97bf35bcbf1', '01', 'Thành phố Hà Nội', 'Thành phố Hà Nội', 'HNI', 'Thành phố Trung Ương', 'VN'),
 ('01a2028f-7a09-7224-a747-312e1d79c1ab', '04', 'Cao Bằng', 'Cao Bằng', 'CBG', 'Tỉnh', 'VN'),

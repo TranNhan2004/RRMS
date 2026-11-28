@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.RateLimiting;
+using RRMS.Domain.Constants.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RRMS.Api.Dtos.Common;
@@ -6,10 +8,11 @@ using RRMS.Application.Interfaces.Services.Addresses;
 
 namespace RRMS.Api.Controllers.V1;
 
+[EnableRateLimiting(RateLimiterPolicies.Standard)]
 [Route("api/v{version:apiVersion}/addresses")]
 [ApiVersion("1.0")]
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 public class AddressController : ControllerBase
 {
     private readonly IAddressQueryService _addressQueryService;

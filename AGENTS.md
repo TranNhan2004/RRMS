@@ -23,6 +23,8 @@
 - Create dedicated repository methods for complex queries involving joins. Fetch only the data needed and avoid unnecessary database round trips and N+1 queries.
 - Use parameterized database queries.
 - For C#, use `IUnitOfWork` to commit database changes in command services.
+- For C#, prioritize existing `GenericRepository` methods; create dedicated repository methods for complex queries or dynamic filtering.
+- For C#, name injected repository and service fields using their full role, such as `_userRepository` and `_userService`, rather than abbreviated names such as `_users`.
 - For C#, reuse the existing generic filtering, pagination, and sorting utilities when a feature needs them.
 - For C#, use LINQ query syntax for joins; do not use method syntax for joins.
 - For C#, use conventional constructors and constructor-based dependency injection. Do not use primary constructors.
@@ -49,11 +51,26 @@
 ## 1.6. Tests
 
 - Always write unit tests for new or modified behavior. For C#, use xUnit and AwesomeAssertions, and name tests `FunctionName_Should{Outcome}_When{Condition}`.
+- Structure every C# backend test using Arrange, Act, Assert (AAA). Mark each section with `// Arrange`, `// Act`, and `// Assert`, and separate the sections with a blank line.
 - Test success, failure, and important edge cases; mock repositories and external dependencies in service unit tests.
 - Run `dotnet test` for C# changes and ensure all tests pass. Never disable failing tests merely to pass the build.
 - Use integration tests for database-specific behavior, constraints, and transaction rollback when appropriate.
 
-## 1.7. Go Formatting
+## 1.7. C# Formatting
+
+- Always use braces for control-flow bodies, including `if`, `else`, `for`, `foreach`, `while`, and `do`, even when the body contains only one statement.
+- Format non-empty object initializers over multiple lines, with each property assignment on its own indented line:
+
+  ```csharp
+  _context.UserCredentials.Add(new UserCredential
+  {
+      Id = Guid.CreateVersion7(),
+      UserId = user.Id,
+      PasswordHash = passwordHash
+  });
+  ```
+
+## 1.8. Go Formatting
 
 - Format non-empty struct and map initializations over multiple lines, with each field or entry on its own line and a trailing comma.
 - Format slice and array initializations over multiple lines; short slices and arrays of simple values, such as integers or short strings, may be inline.
